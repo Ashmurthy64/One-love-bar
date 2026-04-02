@@ -8,7 +8,7 @@ Now uses JWT authentication for cross-domain API access.
 Frontend is served separately on GitHub Pages at https://ashmurthy64.github.io
 
 Requirements:
-    pip install flask flask-cors requests schedule openai pyjwt
+    pip install flask flask-cors requests schedule openai pyjwth
 
 Run:
     python server.py
@@ -467,10 +467,10 @@ def _do_post_to_facebook(config, caption, image_url):
     token = config["page_access_token"]
     page_id = config["page_id"]
     if image_url:
-        url = f"https://graph.facebook.com/v19.0/{page_id}/photos"
+        url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
         data = {"url": image_url, "caption": caption, "access_token": token}
     else:
-        url = f"https://graph.facebook.com/v19.0/{page_id}/feed"
+        url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
         data = {"message": caption, "access_token": token}
     return http_requests.post(url, data=data).json()
 
@@ -478,14 +478,14 @@ def _do_post_to_instagram(config, caption, image_url):
     token = config["page_access_token"]
     ig_id = config["instagram_account_id"]
     container = http_requests.post(
-        f"https://graph.facebook.com/v19.0/{ig_id}/media",
+        f"https://graph.facebook.com/v21.0/{ig_id}/media",
         data={"image_url": image_url, "caption": caption, "access_token": token}
     ).json()
     if "error" in container:
         return container
     time.sleep(5)
     return http_requests.post(
-        f"https://graph.facebook.com/v19.0/{ig_id}/media_publish",
+        f"https://graph.facebook.com/v21.0/{ig_id}/media_publish",
         data={"creation_id": container["id"], "access_token": token}
     ).json()
 
