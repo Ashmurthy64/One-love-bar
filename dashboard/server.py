@@ -754,8 +754,11 @@ def generate_image():
 
 @app.route("/api/ai/preview/<filename>")
 def preview_image(filename):
-    """Serve a generated image preview (no auth - images are non-sensitive)."""
+    """Serve a generated/imported image preview (no auth - images are non-sensitive)."""
     safe_name = Path(filename).name  # Prevent path traversal
+    allowed_ext = {".png", ".jpg", ".jpeg", ".webp"}
+    if Path(safe_name).suffix.lower() not in allowed_ext:
+        return jsonify({"error": "Invalid file type"}), 400
     return send_from_directory(str(GENERATED_IMAGES_DIR), safe_name)
 
 @app.route("/api/ai/gallery")
@@ -763,14 +766,51 @@ def preview_image(filename):
 def ai_gallery():
     """List all generated images."""
     images = []
-    for f in sorted(GENERATED_IMAGES_DIR.glob("*.png"), reverse=True):
-        images.append({
-            "filename": f.name,
-            "preview_url": f"/api/ai/preview/{f.name}",
-            "size_bytes": f.stat().st_size,
-            "created": datetime.fromtimestamp(f.stat().st_mtime).isoformat(),
-        })
+    for ext in ("*.png", "*.jpg", "*.jpeg"):
+        for f in GENERATED_IMAGES_DIR.glob(ext):
+            images.append({
+                "filename": f.name,
+                "preview_url": f"/api/ai/preview/{f.name}",
+                "size_bytes": f.stat().st_size,
+                "created": datetime.fromtimestamp(f.stat().st_mtime).isoformat(),
+            })
+    images.sort(key=lambda x: x["created"], reverse=True)
     return jsonify(images[:50])  # Last 50
+
+
+@app.route("/api/ai/import-image", methods=["POST"])
+@login_required
+def import_external_image():
+    """Upload an external image (e.g. from Midjourney) into the gallery."""
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"error": "No file selected"}), 400
+
+    # Validate extension
+    allowed = {".png", ".jpg", ".jpeg", ".webp"}
+    ext = Path(file.filename).suffix.lower()
+    if ext not in allowed:
+        return jsonify({"error": f"Unsupported format. Allowed: {', '.join(allowed)}"}), 400
+
+    # Generate safe filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_ext = ".jpg" if ext == ".jpeg" else ext
+    dest_name = f"ext_{timestamp}{safe_ext}"
+    dest_path = GENERATED_IMAGES_DIR / dest_name
+
+    file.save(str(dest_path))
+    size_bytes = dest_path.stat().st_size
+
+    log_action(f"Imported external image: {dest_name} ({size_bytes} bytes)")
+
+    return jsonify({
+        "filename": dest_name,
+        "preview_url": f"/api/ai/preview/{dest_name}",
+        "size_bytes": size_bytes,
+    })
 
 @app.route("/api/ai/upload-to-github", methods=["POST"])
 @login_required
