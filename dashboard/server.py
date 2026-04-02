@@ -114,6 +114,11 @@ DEFAULT_USERS = {
         "password_hash": hashlib.sha256("OneLove2026!".encode()).hexdigest(),
         "name": "Ash Murthy",
         "role": "admin",
+    },
+    "asmith": {
+        "password_hash": hashlib.sha256("Lasterrenas2026!".encode()).hexdigest(),
+        "name": "Abagail Smith",
+        "role": "editor",
     }
 }
 
@@ -147,7 +152,16 @@ def get_logs():
     return load_json(LOGS_FILE, [])
 
 def get_users():
-    return load_json(USERS_FILE, DEFAULT_USERS)
+    saved = load_json(USERS_FILE, DEFAULT_USERS)
+    # Merge: ensure any new DEFAULT_USERS are added to existing file
+    merged = False
+    for username, info in DEFAULT_USERS.items():
+        if username not in saved:
+            saved[username] = info
+            merged = True
+    if merged:
+        save_json(USERS_FILE, saved)
+    return saved
 
 def add_log(entry):
     logs = get_logs()
@@ -225,6 +239,35 @@ def login():
         "name": user["name"],
         "role": user["role"]
     })
+
+@app.route("/api/change-password", methods=["POST"])
+@require_auth
+def change_password():
+    data = request.json or {}
+    current_password = data.get("current_password", "")
+    new_password = data.get("new_password", "")
+    if not current_password or not new_password:
+        return jsonify({"error": "Both current and new password are required"}), 400
+    if len(new_password) < 8:
+        return jsonify({"error": "New password must be at least 8 characters"}), 400
+
+    username = request.user.get("username")
+    users = get_users()
+    user = users.get(username)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Verify current password
+    current_hash = hashlib.sha256(current_password.encode()).hexdigest()
+    if current_hash != user["password_hash"]:
+        return jsonify({"error": "Current password is incorrect"}), 401
+
+    # Update password
+    user["password_hash"] = hashlib.sha256(new_password.encode()).hexdigest()
+    users[username] = user
+    save_json(USERS_FILE, users)
+    add_log({"time": datetime.now().isoformat(), "action": "password_changed", "username": username})
+    return jsonify({"ok": True, "message": "Password updated successfully"})
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
