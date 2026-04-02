@@ -967,7 +967,7 @@ function AIImagesPage({ showToast }) {
           </h3>
           {preview ? (
             <div>
-              <img src={preview.preview_url} alt="Generated" style={{width:"100%", borderRadius:8, marginBottom:12}} />
+              <img src={API_BASE + preview.preview_url} alt="Generated" style={{width:"100%", borderRadius:8, marginBottom:12}} />
               <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:8}}><strong>Revised prompt:</strong> {preview.revised_prompt}</p>
               <p style={{fontSize:12, color:"var(--gray-400)", marginBottom:12}}>File: {preview.filename} ({(preview.size_bytes / 1024).toFixed(0)} KB)</p>
               <button className="btn btn-green btn-sm" onClick={() => openUploadModal(preview)}>
@@ -994,7 +994,7 @@ function AIImagesPage({ showToast }) {
           <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12}}>
             {gallery.map(img => (
               <div key={img.filename} style={{background:"var(--gray-50)", borderRadius:8, overflow:"hidden", border:"1px solid var(--gray-200)"}}>
-                <img src={img.preview_url} alt={img.filename} style={{width:"100%", height:140, objectFit:"cover"}} />
+                <img src={API_BASE + img.preview_url} alt={img.filename} style={{width:"100%", height:140, objectFit:"cover"}} />
                 <div style={{padding:8}}>
                   <p style={{fontSize:11, color:"var(--gray-500)", marginBottom:4}}>{new Date(img.created).toLocaleDateString()}</p>
                   <button className="btn btn-green btn-sm" style={{width:"100%", justifyContent:"center"}} onClick={() => openUploadModal(img)}>
@@ -1013,7 +1013,7 @@ function AIImagesPage({ showToast }) {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h3>Upload to GitHub Pages</h3>
             <div style={{textAlign:"center", marginBottom:16}}>
-              <img src={uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
+              <img src={API_BASE + uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
             </div>
             <div className="form-group">
               <label>Image Filename (on GitHub Pages)</label>
