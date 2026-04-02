@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Love Beach Bar — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1B6B3A;
+  --green-light: #e8f5e9;
+  --green-dark: #145029;
+  --gold: #D4A843;
+  --gold-light: #fff8e1;
+  --sand: #FFF9F0;
+  --red: #e53e3e;
+  --red-light: #fff5f5;
+  --blue: #3182ce;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+/* ── LOGIN ── */
+.login-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+}
+.login-box {
+  background: white; border-radius: var(--radius); padding: 48px 40px; width: 400px;
+  box-shadow: var(--shadow-lg); text-align: center;
+}
+.login-box h1 { color: var(--green); font-size: 24px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px; }
+.login-box .subtitle { color: var(--gray-500); font-size: 14px; margin-bottom: 32px; }
+.login-box input {
+  width: 100%; padding: 12px 16px; border: 1px solid var(--gray-300); border-radius: 8px;
+  font-size: 15px; margin-bottom: 12px; outline: none; font-family: inherit;
+  transition: border-color 0.2s;
+}
+.login-box input:focus { border-color: var(--green); }
+.login-box button {
+  width: 100%; padding: 12px; background: var(--green); color: white; border: none;
+  border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer;
+  margin-top: 8px; transition: background 0.2s; font-family: inherit;
+}
+.login-box button:hover { background: var(--green-dark); }
+.login-error { color: var(--red); font-size: 13px; margin-top: 8px; }
+
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 240px; background: var(--green); color: white; padding: 24px 0;
+  display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; z-index: 10;
+}
+.sidebar-logo { padding: 0 20px; margin-bottom: 32px; }
+.sidebar-logo h2 { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+.sidebar-logo p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+.sidebar nav { flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 20px;
+  cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.15s;
+  border: none; background: none; color: white; width: 100%; text-align: left;
+  font-family: inherit;
+}
+.nav-item:hover { background: rgba(255,255,255,0.1); }
+.nav-item.active { background: rgba(255,255,255,0.2); font-weight: 600; }
+.nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+.sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+.sidebar-footer .logout-btn {
+  font-size: 12px; opacity: 0.7; cursor: pointer; background: none; border: none;
+  color: white; padding: 4px 0; font-family: inherit;
+}
+.sidebar-footer .logout-btn:hover { opacity: 1; }
+
+.main { margin-left: 240px; flex: 1; padding: 32px; max-width: 1100px; }
+.page-title { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 24px; letter-spacing: -0.5px; }
+
+/* ── CARDS ── */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.card {
+  background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
+}
+.card-label { font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+.card-value { font-size: 28px; font-weight: 700; color: var(--gray-900); margin-top: 4px; }
+.card-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+.card.green { border-left: 4px solid var(--green); }
+.card.gold { border-left: 4px solid var(--gold); }
+.card.blue { border-left: 4px solid var(--blue); }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px;
+}
+.table-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-bottom: 1px solid var(--gray-200);
+}
+.table-header h3 { font-size: 16px; font-weight: 600; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 10px 20px; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+td { padding: 12px 20px; font-size: 14px; border-bottom: 1px solid var(--gray-100); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-50); }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; font-family: inherit; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: var(--green-dark); }
+.btn-gold { background: var(--gold); color: white; }
+.btn-gold:hover { background: #c49a3a; }
+.btn-red { background: var(--red); color: white; }
+.btn-red:hover { background: #c53030; }
+.btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-300); }
+.btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── FORMS ── */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--gray-300); border-radius: 8px;
+  font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--green); }
+.form-group textarea { min-height: 100px; resize: vertical; }
+.form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal {
+  background: white; border-radius: var(--radius); padding: 28px; width: 520px;
+  max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+}
+.modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600;
+}
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-gold { background: var(--gold-light); color: #8B6914; }
+
+/* ── POST CARD ── */
+.post-card {
+  background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+  margin-bottom: 16px; display: flex; gap: 0;
+}
+.post-card-img {
+  width: 120px; height: 120px; object-fit: cover; background: var(--gray-200); flex-shrink: 0;
+}
+.post-card-body { padding: 16px; flex: 1; min-width: 0; }
+.post-card-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.post-card-body p { font-size: 13px; color: var(--gray-500); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.post-card-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+/* ── STATUS DOT ── */
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.green { background: #22c55e; }
+.status-dot.red { background: var(--red); }
+.status-dot.yellow { background: var(--gold); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 8px;
+  background: var(--gray-800); color: white; font-size: 14px; font-weight: 500;
+  box-shadow: var(--shadow-lg); z-index: 200; animation: slideIn 0.3s ease;
+}
+.toast.success { background: var(--green); }
+.toast.error { background: var(--red); }
+@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; padding: 16px 0; }
+  .sidebar-logo h2, .sidebar-logo p, .nav-item span, .sidebar-footer .user-name { display: none; }
+  .nav-item { justify-content: center; padding: 12px; }
+  .main { margin-left: 60px; padding: 20px; }
+  .post-card { flex-direction: column; }
+  .post-card-img { width: 100%; height: 160px; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ══════════════════════════════════════════════
+// CONFIG & API HELPER
+// ══════════════════════════════════════════════
+const API_BASE = localStorage.getItem('oneloveDashboardApi') || '';
+
+const api = async (path, options = {}) => {
+  const token = localStorage.getItem('oneloveToken');
+  const res = await fetch(`${API_BASE}/api${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? {"Authorization": `Bearer ${token}`} : {}),
+      ...options.headers
+    },
+    ...options,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Request failed");
+  return data;
+};
+
+// ══════════════════════════════════════════════
+// ICONS (inline SVG)
+// ══════════════════════════════════════════════
+const Icon = ({ name }) => {
+  const icons = {
+    home: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>,
+    posts: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
+    users: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>,
+    settings: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
+    logs: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>,
+    send: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>,
+    plus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+    trash: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>,
+    edit: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    play: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5,3 19,12 5,21"/></svg>,
+    pause: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+    ai: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
+    image: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>,
+    upload: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+    sparkle: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>,
+  };
+  return icons[name] || null;
+};
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimeout;
+function Toast({ message, type }) {
+  if (!message) return null;
+  return <div className={`toast ${type}`}>{message}</div>;
+}
+
+// ══════════════════════════════════════════════
+// LOGIN PAGE
+// ══════════════════════════════════════════════
+function LoginPage({ onLogin }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const data = await api("/login", { method: "POST", body: { username, password } });
+      if (data.token) {
+        localStorage.setItem('oneloveToken', data.token);
+      }
+      onLogin(data);
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="login-page">
+      <form className="login-box" onSubmit={handleSubmit}>
+        <h1>ONE LOVE BEACH BAR</h1>
+        <p className="subtitle">Operator Dashboard</p>
+        <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} autoFocus />
+        <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+        <button type="submit" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</button>
+        {error && <p className="login-error">{error}</p>}
+      </form>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD PAGE
+// ══════════════════════════════════════════════
+function DashboardPage({ showToast }) {
+  const [data, setData] = useState(null);
+  const [posting, setPosting] = useState(false);
+  const [schedStatus, setSchedStatus] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      const [d, s] = await Promise.all([api("/dashboard"), api("/scheduler/status")]);
+      setData(d);
+      setSchedStatus(s);
+    } catch (err) { console.error(err); }
+  }, []);
+
+  useEffect(() => { load(); const i = setInterval(load, 15000); return () => clearInterval(i); }, [load]);
+
+  const postNow = async () => {
+    if (!confirm("Post to Facebook, Instagram, and WhatsApp right now?")) return;
+    setPosting(true);
+    try {
+      const r = await api("/post-now", { method: "POST", body: {} });
+      showToast(`Posted "${r.post_id}" — FB: ${r.facebook}, IG: ${r.instagram}, WA: ${r.whatsapp}`, "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+    setPosting(false);
+  };
+
+  const toggleScheduler = async () => {
+    const action = schedStatus?.running ? "stop" : "start";
+    try {
+      await api(`/scheduler/${action}`, { method: "POST" });
+      showToast(`Scheduler ${action}ed`, "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  if (!data) return <div className="main"><p>Loading...</p></div>;
+
+  const { stats, schedule, next_post, recent_logs } = data;
+  const lastDate = stats.last_post_date ? new Date(stats.last_post_date).toLocaleString() : "Never";
+
+  return (
+    <>
+      <h1 className="page-title">Dashboard</h1>
+      <div className="cards">
+        <div className="card green">
+          <div className="card-label">Posts Sent</div>
+          <div className="card-value">{stats.total_posts_sent}</div>
+          <div className="card-sub">Last: {lastDate}</div>
+        </div>
+        <div className="card gold">
+          <div className="card-label">Campaign Posts</div>
+          <div className="card-value">{stats.total_campaign_posts}</div>
+          <div className="card-sub">Rotating library</div>
+        </div>
+        <div className="card blue">
+          <div className="card-label">WhatsApp Contacts</div>
+          <div className="card-value">{stats.total_recipients}</div>
+          <div className="card-sub">Broadcast list</div>
+        </div>
+        <div className="card">
+          <div className="card-label">Schedule</div>
+          <div className="card-value" style={{fontSize:20}}>Every {schedule.interval_days}d</div>
+          <div className="card-sub">at {schedule.post_time}</div>
+        </div>
+      </div>
+
+      <div style={{display:"flex", gap:12, marginBottom:24, flexWrap:"wrap"}}>
+        <button className="btn btn-green" onClick={postNow} disabled={posting}>
+          <Icon name="send" /> {posting ? "Posting..." : "Post Now"}
+        </button>
+        <button className="btn btn-outline" onClick={toggleScheduler}>
+          <Icon name={schedStatus?.running ? "pause" : "play"} />
+          {schedStatus?.running ? "Stop Scheduler" : "Start Scheduler"}
+        </button>
+        <span style={{alignSelf:"center", fontSize:13, color: schedStatus?.running ? "var(--green)" : "var(--gray-400)"}}>
+          <span className={`status-dot ${schedStatus?.running ? "green" : "red"}`}></span>
+          Scheduler {schedStatus?.running ? "running" : "stopped"}
+        </span>
+      </div>
+
+      {next_post && (
+        <div className="table-wrap" style={{marginBottom:24}}>
+          <div className="table-header">
+            <h3>Up Next: {next_post.id}</h3>
+          </div>
+          <div style={{padding:16, display:"flex", gap:16, alignItems:"center"}}>
+            <img src={next_post.image_url} style={{width:80, height:80, borderRadius:8, objectFit:"cover", background:"var(--gray-200)"}} onError={e => e.target.style.display="none"} />
+            <p style={{fontSize:14, color:"var(--gray-600)"}}>This post will be published next when the scheduler fires or you click "Post Now".</p>
+          </div>
+        </div>
+      )}
+
+      <div className="table-wrap">
+        <div className="table-header"><h3>Recent Activity</h3></div>
+        <table>
+          <thead><tr><th>Time</th><th>Action</th><th>Details</th></tr></thead>
+          <tbody>
+            {recent_logs.length === 0 && <tr><td colSpan="3" style={{textAlign:"center", color:"var(--gray-400)", padding:24}}>No activity yet</td></tr>}
+            {recent_logs.map((log, i) => (
+              <tr key={i}>
+                <td style={{whiteSpace:"nowrap"}}>{log.time ? new Date(log.time).toLocaleString() : "-"}</td>
+                <td>{log.action || log.post_id || "-"}</td>
+                <td>
+                  {log.facebook && <><span className={`badge ${log.facebook === "ok" ? "badge-green" : "badge-red"}`}>FB {log.facebook}</span>{" "}</>}
+                  {log.instagram && <><span className={`badge ${log.instagram === "ok" ? "badge-green" : "badge-red"}`}>IG {log.instagram}</span>{" "}</>}
+                  {log.whatsapp && <span className="badge badge-gold">WA {log.whatsapp}</span>}
+                  {log.by && <span style={{fontSize:12, color:"var(--gray-400)", marginLeft:8}}>by {log.by}</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// POSTS PAGE
+// ══════════════════════════════════════════════
+function PostsPage({ showToast }) {
+  const [posts, setPosts] = useState([]);
+  const [modal, setModal] = useState(null); // "new" | {editing post}
+  const [form, setForm] = useState({ id: "", caption: "", fb_caption: "", image_file: "" });
+  const [saving, setSaving] = useState(false);
+
+  const load = async () => { try { setPosts(await api("/posts")); } catch(e){} };
+  useEffect(() => { load(); }, []);
+
+  const openNew = () => { setForm({ id: "", caption: "", fb_caption: "", image_file: "" }); setModal("new"); };
+  const openEdit = (p) => { setForm({ ...p }); setModal("edit"); };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      if (modal === "new") {
+        await api("/posts", { method: "POST", body: form });
+        showToast("Post created!", "success");
+      } else {
+        await api(`/posts/${form.id}`, { method: "PUT", body: form });
+        showToast("Post updated!", "success");
+      }
+      setModal(null);
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+    setSaving(false);
+  };
+
+  const deletePost = async (id) => {
+    if (!confirm(`Delete post "${id}"? This resets the rotation.`)) return;
+    try {
+      await api(`/posts/${id}`, { method: "DELETE" });
+      showToast("Post deleted", "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  const testPost = async (id, platform) => {
+    try {
+      const r = await api("/post-single", { method: "POST", body: { post_id: id, platform } });
+      showToast(`${platform}: ${r.success ? "Sent!" : "Failed"}`, r.success ? "success" : "error");
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  return (
+    <>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24}}>
+        <h1 className="page-title" style={{margin:0}}>Campaign Posts</h1>
+        <button className="btn btn-green" onClick={openNew}><Icon name="plus" /> New Post</button>
+      </div>
+
+      {posts.map(p => (
+        <div className="post-card" key={p.id}>
+          <img className="post-card-img" src={p.image_url} alt={p.id} onError={e => { e.target.src = ""; e.target.style.background="var(--gray-200)"; }} />
+          <div className="post-card-body">
+            <h4>{p.id}</h4>
+            <p>{p.caption}</p>
+            <div className="post-card-actions">
+              <button className="btn btn-outline btn-sm" onClick={() => openEdit(p)}><Icon name="edit" /> Edit</button>
+              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "facebook")}>Test FB</button>
+              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "instagram")}>Test IG</button>
+              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "whatsapp")}>Test WA</button>
+              <button className="btn btn-red btn-sm" onClick={() => deletePost(p.id)}><Icon name="trash" /></button>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {posts.length === 0 && <p style={{textAlign:"center", color:"var(--gray-400)", padding:40}}>No posts yet. Click "New Post" to create one.</p>}
+
+      {modal && (
+        <div className="modal-overlay" onClick={() => setModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>{modal === "new" ? "New Campaign Post" : "Edit Post"}</h3>
+            <div className="form-group">
+              <label>Post ID (short name, no spaces)</label>
+              <input value={form.id} onChange={e => setForm({...form, id: e.target.value})} disabled={modal === "edit"} placeholder="e.g. grand_opening" />
+            </div>
+            <div className="form-group">
+              <label>WhatsApp Caption (clean text, no emojis/hashtags)</label>
+              <textarea value={form.caption} onChange={e => setForm({...form, caption: e.target.value})} placeholder="The text that goes to WhatsApp..." />
+            </div>
+            <div className="form-group">
+              <label>Facebook/Instagram Caption (with emojis and #hashtags)</label>
+              <textarea value={form.fb_caption} onChange={e => setForm({...form, fb_caption: e.target.value})} placeholder="The text with emojis and hashtags..." />
+            </div>
+            <div className="form-group">
+              <label>Image Filename</label>
+              <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg" />
+              <p className="form-hint">Upload your image to github.com/ashmurthy64/One-love-bar/images/ first</p>
+            </div>
+            {form.image_file && (
+              <div style={{marginBottom:16}}>
+                <img src={`https://ashmurthy64.github.io/One-love-bar/images/${form.image_file}`} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
+              </div>
+            )}
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setModal(null)}>Cancel</button>
+              <button className="btn btn-green" onClick={save} disabled={saving}>{saving ? "Saving..." : "Save Post"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// RECIPIENTS PAGE
+// ══════════════════════════════════════════════
+function RecipientsPage({ showToast }) {
+  const [recipients, setRecipients] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState({ phone: "", name: "", role: "Contact" });
+
+  const load = async () => { try { setRecipients(await api("/recipients")); } catch(e){} };
+  useEffect(() => { load(); }, []);
+
+  const addRecipient = async () => {
+    try {
+      await api("/recipients", { method: "POST", body: form });
+      showToast("Contact added!", "success");
+      setModal(false);
+      setForm({ phone: "", name: "", role: "Contact" });
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  const removeRecipient = async (phone) => {
+    if (!confirm(`Remove ${phone} from the WhatsApp list?`)) return;
+    try {
+      await api(`/recipients/${phone}`, { method: "DELETE" });
+      showToast("Contact removed", "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  return (
+    <>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24}}>
+        <h1 className="page-title" style={{margin:0}}>WhatsApp Contacts</h1>
+        <button className="btn btn-green" onClick={() => setModal(true)}><Icon name="plus" /> Add Contact</button>
+      </div>
+
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Role</th><th></th></tr></thead>
+          <tbody>
+            {recipients.map(r => (
+              <tr key={r.phone}>
+                <td style={{fontWeight:500}}>{r.name || "-"}</td>
+                <td>{r.phone}</td>
+                <td><span className="badge badge-green">{r.role}</span></td>
+                <td style={{textAlign:"right"}}>
+                  <button className="btn btn-red btn-sm" onClick={() => removeRecipient(r.phone)}><Icon name="trash" /></button>
+                </td>
+              </tr>
+            ))}
+            {recipients.length === 0 && <tr><td colSpan="4" style={{textAlign:"center", color:"var(--gray-400)", padding:24}}>No contacts yet</td></tr>}
+          </tbody>
+        </table>
+      </div>
+
+      {modal && (
+        <div className="modal-overlay" onClick={() => setModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Add WhatsApp Contact</h3>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="e.g. 18091234567 (country code, no + or spaces)" />
+              <p className="form-hint">International format: country code + number, no spaces or dashes</p>
+            </div>
+            <div className="form-group">
+              <label>Name</label>
+              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Maria Rodriguez" />
+            </div>
+            <div className="form-group">
+              <label>Role</label>
+              <select value={form.role} onChange={e => setForm({...form, role: e.target.value})}>
+                <option>Contact</option>
+                <option>Investor</option>
+                <option>Staff</option>
+                <option>Admin</option>
+              </select>
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setModal(false)}>Cancel</button>
+              <button className="btn btn-green" onClick={addRecipient}>Add Contact</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS PAGE
+// ══════════════════════════════════════════════
+function SettingsPage({ showToast }) {
+  const [config, setConfig] = useState(null);
+  const [form, setForm] = useState({});
+
+  const load = async () => {
+    try {
+      const c = await api("/config");
+      setConfig(c);
+      setForm({
+        post_time: c.post_time,
+        post_interval_days: c.post_interval_days,
+        report_recipient: c.report_recipient,
+        image_base_url: c.image_base_url,
+        github_image_repo: c.github_image_repo || "Ashmurthy64/One-love-bar",
+      });
+    } catch(e){}
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async () => {
+    try {
+      await api("/config", { method: "PUT", body: form });
+      showToast("Settings saved!", "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
+  if (!config) return <p>Loading...</p>;
+
+  return (
+    <>
+      <h1 className="page-title">Settings</h1>
+
+      <div className="table-wrap" style={{padding:24}}>
+        <h3 style={{marginBottom:20}}>Posting Schedule</h3>
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:16}}>
+          <div className="form-group">
+            <label>Post Time (24-hour)</label>
+            <input value={form.post_time || ""} onChange={e => setForm({...form, post_time: e.target.value})} placeholder="10:00" />
+            <p className="form-hint">e.g. 10:00 for 10 AM, 17:00 for 5 PM</p>
+          </div>
+          <div className="form-group">
+            <label>Post Every X Days</label>
+            <input type="number" min="1" value={form.post_interval_days || ""} onChange={e => setForm({...form, post_interval_days: parseInt(e.target.value) || 1})} />
+            <p className="form-hint">1 = daily, 2 = every other day, 7 = weekly</p>
+          </div>
+        </div>
+
+        <h3 style={{marginTop:24, marginBottom:20}}>Notifications</h3>
+        <div className="form-group">
+          <label>Status Report Recipient (WhatsApp)</label>
+          <input value={form.report_recipient || ""} onChange={e => setForm({...form, report_recipient: e.target.value})} placeholder="15713410830" />
+          <p className="form-hint">Phone number that receives post reports. Leave empty to disable.</p>
+        </div>
+
+        <h3 style={{marginTop:24, marginBottom:20}}>Image Hosting</h3>
+        <div className="form-group">
+          <label>Image Base URL</label>
+          <input value={form.image_base_url || ""} onChange={e => setForm({...form, image_base_url: e.target.value})} />
+          <p className="form-hint">Images are loaded from this URL + image filename</p>
+        </div>
+
+        <h3 style={{marginTop:24, marginBottom:20}}>API Credentials</h3>
+        <div className="form-group">
+          <label>Access Token</label>
+          <p style={{fontSize:14, color:"var(--gray-500)", padding:"8px 0"}}>{config.token_preview}</p>
+          <p className="form-hint">To update the token, use the field below</p>
+        </div>
+        <div className="form-group">
+          <label>New Access Token (paste here to update)</label>
+          <input onChange={e => setForm({...form, page_access_token: e.target.value})} placeholder="Leave blank to keep current token" />
+        </div>
+
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:16}}>
+          <div className="form-group">
+            <label>Page ID</label>
+            <input value={config.page_id} disabled style={{background:"var(--gray-50)"}} />
+          </div>
+          <div className="form-group">
+            <label>Instagram Account ID</label>
+            <input value={config.instagram_account_id} disabled style={{background:"var(--gray-50)"}} />
+          </div>
+          <div className="form-group">
+            <label>WhatsApp Phone Number ID</label>
+            <input value={config.wa_phone_number_id} disabled style={{background:"var(--gray-50)"}} />
+          </div>
+          <div className="form-group">
+            <label>WhatsApp Business Account ID</label>
+            <input value={config.wa_business_account_id} disabled style={{background:"var(--gray-50)"}} />
+          </div>
+        </div>
+
+        <h3 style={{marginTop:24, marginBottom:20}}>AI Image Generation (DALL-E 3)</h3>
+        <div className="form-group">
+          <label>OpenAI API Key</label>
+          <p style={{fontSize:14, color:"var(--gray-500)", padding:"4px 0"}}>{config.openai_key_preview || "(not set)"}</p>
+          <input onChange={e => setForm({...form, openai_api_key: e.target.value})} placeholder="sk-... (paste to update)" style={{marginTop:4}} />
+          <p className="form-hint">Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a>. Used for DALL-E 3 image generation.</p>
+        </div>
+
+        <h3 style={{marginTop:24, marginBottom:20}}>GitHub Image Upload</h3>
+        <div className="form-group">
+          <label>GitHub Personal Access Token</label>
+          <p style={{fontSize:14, color:"var(--gray-500)", padding:"4px 0"}}>{config.github_token_preview || "(not set)"}</p>
+          <input onChange={e => setForm({...form, github_token: e.target.value})} placeholder="ghp_... (paste to update)" style={{marginTop:4}} />
+          <p className="form-hint">Needed to upload AI-generated images to your GitHub Pages repo. Create at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a> with "repo" scope.</p>
+        </div>
+        <div className="form-group">
+          <label>GitHub Image Repo</label>
+          <input value={form.github_image_repo || config.github_image_repo || "Ashmurthy64/One-love-bar"} onChange={e => setForm({...form, github_image_repo: e.target.value})} />
+          <p className="form-hint">The repo where images are hosted (owner/repo format)</p>
+        </div>
+
+        <button className="btn btn-green" onClick={save} style={{marginTop:16}}>Save Settings</button>
+      </div>
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// LOGS PAGE
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// AI IMAGES PAGE
+// ══════════════════════════════════════════════
+function AIImagesPage({ showToast }) {
+  const [prompt, setPrompt] = useState("");
+  const [caption, setCaption] = useState("");
+  const [size, setSize] = useState("1024x1024");
+  const [quality, setQuality] = useState("standard");
+  const [generating, setGenerating] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [gallery, setGallery] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [aiConfig, setAiConfig] = useState({});
+  const [uploadModal, setUploadModal] = useState(null);
+  const [targetFilename, setTargetFilename] = useState("");
+  const [attachPostId, setAttachPostId] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [style, setStyle] = useState("tropical beach bar photography, warm golden hour lighting");
+
+  const loadGallery = async () => { try { setGallery(await api("/ai/gallery")); } catch(e){} };
+  const loadPosts = async () => { try { setPosts(await api("/posts")); } catch(e){} };
+  const loadConfig = async () => { try { setAiConfig(await api("/ai/config")); } catch(e){} };
+  useEffect(() => { loadGallery(); loadPosts(); loadConfig(); }, []);
+
+  const suggestPrompt = async () => {
+    if (!caption.trim()) { showToast("Enter a post caption first", "error"); return; }
+    setSuggesting(true);
+    try {
+      const res = await api("/ai/suggest-prompt", { method: "POST", body: { caption, style } });
+      if (res.error) throw new Error(res.error);
+      setPrompt(res.prompt);
+      showToast("Prompt generated!");
+    } catch(e) { showToast(e.message, "error"); }
+    setSuggesting(false);
+  };
+
+  const generateImage = async () => {
+    if (!prompt.trim()) { showToast("Enter a prompt first", "error"); return; }
+    setGenerating(true);
+    try {
+      const res = await api("/ai/generate-image", { method: "POST", body: { prompt, size, quality } });
+      if (res.error) throw new Error(res.error);
+      setPreview(res);
+      loadGallery();
+      showToast("Image generated!");
+    } catch(e) { showToast(e.message, "error"); }
+    setGenerating(false);
+  };
+
+  const openUploadModal = (img) => {
+    setUploadModal(img);
+    const name = img.filename.replace(/\.png$/, "").replace(/^ai_/, "post-");
+    setTargetFilename(name + ".png");
+    setAttachPostId("");
+  };
+
+  const uploadAndAttach = async () => {
+    if (!targetFilename.trim()) { showToast("Enter a filename", "error"); return; }
+    setUploading(true);
+    try {
+      // Upload to GitHub Pages
+      const res = await api("/ai/upload-to-github", { method: "POST", body: {
+        filename: uploadModal.filename, target_filename: targetFilename,
+      }});
+      if (res.error) throw new Error(res.error);
+      // If a post was selected, attach the image to it
+      if (attachPostId) {
+        await api(`/posts/${attachPostId}`, { method: "PUT", body: { image_file: targetFilename } });
+        showToast(`Uploaded & attached to post "${attachPostId}"!`);
+      } else {
+        showToast(`Uploaded to GitHub Pages: ${targetFilename}`);
+      }
+      setUploadModal(null);
+      loadPosts();
+    } catch(e) { showToast(e.message, "error"); }
+    setUploading(false);
+  };
+
+  return (
+    <>
+      <h1 className="page-title">AI Image Generator</h1>
+
+      {!aiConfig.configured && (
+        <div style={{background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:"var(--radius)", padding:16, marginBottom:24, fontSize:14}}>
+          <strong>Setup needed:</strong> Add your OpenAI API key in Settings to enable AI image generation.
+          {!aiConfig.github_token_set && <span> Also add a GitHub token to upload images to your site.</span>}
+        </div>
+      )}
+
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginBottom:32}}>
+        {/* LEFT: Generator */}
+        <div className="table-wrap" style={{padding:20}}>
+          <h3 style={{fontSize:16, fontWeight:600, marginBottom:16, display:"flex", alignItems:"center", gap:8}}>
+            <Icon name="sparkle" /> Generate Image
+          </h3>
+
+          <div className="form-group">
+            <label>Post Caption (optional — helps AI suggest a prompt)</label>
+            <textarea value={caption} onChange={e => setCaption(e.target.value)}
+              placeholder="Paste your post caption here and click 'Suggest Prompt' to get an AI-generated image prompt..."
+              style={{minHeight:80}} />
+          </div>
+
+          <div className="form-group">
+            <label>Style Direction</label>
+            <input value={style} onChange={e => setStyle(e.target.value)}
+              placeholder="e.g., tropical beach bar photography, warm golden hour" />
+          </div>
+
+          <button className="btn btn-gold btn-sm" onClick={suggestPrompt} disabled={suggesting} style={{marginBottom:16}}>
+            <Icon name="sparkle" /> {suggesting ? "Thinking..." : "Suggest Prompt from Caption"}
+          </button>
+
+          <div className="form-group">
+            <label>Image Prompt</label>
+            <textarea value={prompt} onChange={e => setPrompt(e.target.value)}
+              placeholder="Describe the image you want DALL-E 3 to create..."
+              style={{minHeight:120}} />
+          </div>
+
+          <div style={{display:"flex", gap:12, marginBottom:16}}>
+            <div className="form-group" style={{flex:1, marginBottom:0}}>
+              <label>Size</label>
+              <select value={size} onChange={e => setSize(e.target.value)}>
+                <option value="1024x1024">Square (1024x1024)</option>
+                <option value="1792x1024">Landscape (1792x1024)</option>
+                <option value="1024x1792">Portrait (1024x1792)</option>
+              </select>
+            </div>
+            <div className="form-group" style={{flex:1, marginBottom:0}}>
+              <label>Quality</label>
+              <select value={quality} onChange={e => setQuality(e.target.value)}>
+                <option value="standard">Standard (~$0.04)</option>
+                <option value="hd">HD (~$0.08)</option>
+              </select>
+            </div>
+          </div>
+
+          <button className="btn btn-green" onClick={generateImage} disabled={generating || !aiConfig.configured}>
+            <Icon name="image" /> {generating ? "Generating... (30-60s)" : "Generate Image"}
+          </button>
+        </div>
+
+        {/* RIGHT: Preview */}
+        <div className="table-wrap" style={{padding:20}}>
+          <h3 style={{fontSize:16, fontWeight:600, marginBottom:16, display:"flex", alignItems:"center", gap:8}}>
+            <Icon name="image" /> Preview
+          </h3>
+          {preview ? (
+            <div>
+              <img src={preview.preview_url} alt="Generated" style={{width:"100%", borderRadius:8, marginBottom:12}} />
+              <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:8}}><strong>Revised prompt:</strong> {preview.revised_prompt}</p>
+              <p style={{fontSize:12, color:"var(--gray-400)", marginBottom:12}}>File: {preview.filename} ({(preview.size_bytes / 1024).toFixed(0)} KB)</p>
+              <button className="btn btn-green btn-sm" onClick={() => openUploadModal(preview)}>
+                <Icon name="upload" /> Upload to GitHub & Attach to Post
+              </button>
+            </div>
+          ) : (
+            <div style={{display:"flex", alignItems:"center", justifyContent:"center", height:300, color:"var(--gray-400)", fontSize:14}}>
+              Generated image will appear here
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Gallery */}
+      <div className="table-wrap" style={{padding:20}}>
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
+          <h3 style={{fontSize:16, fontWeight:600}}>Generated Images Gallery</h3>
+          <button className="btn btn-outline btn-sm" onClick={loadGallery}>Refresh</button>
+        </div>
+        {gallery.length === 0 ? (
+          <p style={{color:"var(--gray-400)", fontSize:14, textAlign:"center", padding:24}}>No images generated yet. Use the generator above to create your first image.</p>
+        ) : (
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12}}>
+            {gallery.map(img => (
+              <div key={img.filename} style={{background:"var(--gray-50)", borderRadius:8, overflow:"hidden", border:"1px solid var(--gray-200)"}}>
+                <img src={img.preview_url} alt={img.filename} style={{width:"100%", height:140, objectFit:"cover"}} />
+                <div style={{padding:8}}>
+                  <p style={{fontSize:11, color:"var(--gray-500)", marginBottom:4}}>{new Date(img.created).toLocaleDateString()}</p>
+                  <button className="btn btn-green btn-sm" style={{width:"100%", justifyContent:"center"}} onClick={() => openUploadModal(img)}>
+                    <Icon name="upload" /> Use
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Upload Modal */}
+      {uploadModal && (
+        <div className="modal-overlay" onClick={() => setUploadModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Upload to GitHub Pages</h3>
+            <div style={{textAlign:"center", marginBottom:16}}>
+              <img src={uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
+            </div>
+            <div className="form-group">
+              <label>Image Filename (on GitHub Pages)</label>
+              <input value={targetFilename} onChange={e => setTargetFilename(e.target.value)} placeholder="e.g., post4-new-vibes.png" />
+              <div className="form-hint">This will be saved at: {aiConfig.github_repo ? `https://ashmurthy64.github.io/One-love-bar/images/${targetFilename}` : "(configure GitHub repo in settings)"}</div>
+            </div>
+            <div className="form-group">
+              <label>Attach to Campaign Post (optional)</label>
+              <select value={attachPostId} onChange={e => setAttachPostId(e.target.value)}>
+                <option value="">— Don't attach to a post —</option>
+                {posts.map(p => <option key={p.id} value={p.id}>{p.id}</option>)}
+              </select>
+              <div className="form-hint">If selected, this image will replace the current image for that post.</div>
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setUploadModal(null)}>Cancel</button>
+              <button className="btn btn-green" onClick={uploadAndAttach} disabled={uploading}>
+                <Icon name="upload" /> {uploading ? "Uploading..." : "Upload & Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// LOGS PAGE
+// ══════════════════════════════════════════════
+function LogsPage() {
+  const [logs, setLogs] = useState([]);
+  const load = async () => { try { setLogs(await api("/logs")); } catch(e){} };
+  useEffect(() => { load(); }, []);
+
+  return (
+    <>
+      <h1 className="page-title">Activity Log</h1>
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Action</th><th>Details</th><th>By</th></tr></thead>
+          <tbody>
+            {logs.map((l, i) => (
+              <tr key={i}>
+                <td style={{whiteSpace:"nowrap", fontSize:13}}>{l.time ? new Date(l.time).toLocaleString() : "-"}</td>
+                <td>{l.action || l.post_id || "-"}</td>
+                <td style={{fontSize:13}}>
+                  {l.facebook && <><span className={`badge ${l.facebook === "ok" ? "badge-green" : "badge-red"}`}>FB {l.facebook}</span>{" "}</>}
+                  {l.instagram && <><span className={`badge ${l.instagram === "ok" ? "badge-green" : "badge-red"}`}>IG {l.instagram}</span>{" "}</>}
+                  {l.whatsapp && <span className="badge badge-gold">WA {l.whatsapp}</span>}
+                  {l.phone && <span style={{fontSize:12}}>Phone: {l.phone}</span>}
+                  {l.fields && <span style={{fontSize:12}}>Changed: {l.fields.join(", ")}</span>}
+                </td>
+                <td style={{fontSize:13, color:"var(--gray-500)"}}>{l.by || "-"}</td>
+              </tr>
+            ))}
+            {logs.length === 0 && <tr><td colSpan="4" style={{textAlign:"center", color:"var(--gray-400)", padding:24}}>No logs yet</td></tr>}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// SETUP SCREEN
+// ══════════════════════════════════════════════
+function SetupScreen({ onSetup }) {
+  const [apiUrl, setApiUrl] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!apiUrl.trim()) {
+      setError("Please enter your Railway API URL");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      localStorage.setItem('oneloveDashboardApi', apiUrl.trim());
+      // Force a page reload to reinitialize with the new API URL
+      window.location.reload();
+    } catch (err) {
+      setError(err.message);
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <form className="login-box" onSubmit={handleSubmit}>
+        <h1>ONE LOVE BEACH BAR</h1>
+        <p className="subtitle">Setup — Configure API Endpoint</p>
+        <div style={{textAlign:"left", background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:8, padding:12, marginBottom:20, fontSize:13}}>
+          <strong>First time setup:</strong> Enter your Railway API base URL (e.g., <code style={{fontSize:12, background:"white", padding:"2px 4px", borderRadius:4}}>https://your-app.railway.app</code>)
+        </div>
+        <input
+          type="url"
+          placeholder="https://your-app.railway.app"
+          value={apiUrl}
+          onChange={e => setApiUrl(e.target.value)}
+          autoFocus
+          style={{marginBottom:12}}
+        />
+        <button type="submit" disabled={saving}>{saving ? "Setting up..." : "Continue"}</button>
+        {error && <p className="login-error">{error}</p>}
+      </form>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// APP
+// ══════════════════════════════════════════════
+function App() {
+  const [user, setUser] = useState(null);
+  const [checking, setChecking] = useState(true);
+  const [page, setPage] = useState("dashboard");
+  const [toast, setToast] = useState({ message: "", type: "" });
+  const [showSettings, setShowSettings] = useState(false);
+  const [newApiUrl, setNewApiUrl] = useState("");
+
+  useEffect(() => {
+    const storedApi = localStorage.getItem('oneloveDashboardApi');
+    const storedToken = localStorage.getItem('oneloveToken');
+
+    if (storedToken && storedApi) {
+      // Verify token with /me endpoint
+      api("/me")
+        .then(d => { setUser(d); setChecking(false); })
+        .catch(() => {
+          localStorage.removeItem('oneloveToken');
+          setChecking(false);
+        });
+    } else {
+      setChecking(false);
+    }
+  }, []);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => setToast({ message: "", type: "" }), 4000);
+  };
+
+  const handleLogout = async () => {
+    localStorage.removeItem('oneloveToken');
+    setUser(null);
+  };
+
+  const handleUpdateApiUrl = async () => {
+    if (!newApiUrl.trim()) {
+      showToast("Please enter a valid URL", "error");
+      return;
+    }
+    localStorage.setItem('oneloveDashboardApi', newApiUrl.trim());
+    setShowSettings(false);
+    setNewApiUrl("");
+    showToast("API URL updated. Please refresh the page.", "success");
+  };
+
+  const storedApi = localStorage.getItem('oneloveDashboardApi');
+
+  if (checking) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}><p>Loading...</p></div>;
+  if (!storedApi) return <SetupScreen onSetup={() => window.location.reload()} />;
+  if (!user) return <LoginPage onLogin={(d) => setUser(d)} />;
+
+  const pages = [
+    { id: "dashboard", label: "Dashboard", icon: "home" },
+    { id: "posts", label: "Campaign Posts", icon: "posts" },
+    { id: "ai", label: "AI Images", icon: "sparkle" },
+    { id: "recipients", label: "WhatsApp Contacts", icon: "users" },
+    { id: "settings", label: "Settings", icon: "settings" },
+    { id: "logs", label: "Activity Log", icon: "logs" },
+  ];
+
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-logo">
+          <h2>ONE LOVE</h2>
+          <p>Beach Bar Dashboard</p>
+        </div>
+        <nav>
+          {pages.map(p => (
+            <button key={p.id} className={`nav-item ${page === p.id ? "active" : ""}`} onClick={() => setPage(p.id)}>
+              <Icon name={p.icon} />
+              <span>{p.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="sidebar-footer">
+          <div className="user-name">{user.name}</div>
+          <div style={{fontSize:11, color:"rgba(255,255,255,0.6)", marginBottom:8, wordBreak:"break-all"}}>
+            API: {storedApi.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+          </div>
+          <button className="logout-btn" style={{marginBottom:6}} onClick={() => setShowSettings(true)}>
+            <Icon name="settings" style={{width:12, height:12, marginRight:4, display:"inline"}} /> Settings
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>Sign out</button>
+        </div>
+      </div>
+      <div className="main">
+        {page === "dashboard" && <DashboardPage showToast={showToast} />}
+        {page === "posts" && <PostsPage showToast={showToast} />}
+        {page === "ai" && <AIImagesPage showToast={showToast} />}
+        {page === "recipients" && <RecipientsPage showToast={showToast} />}
+        {page === "settings" && <SettingsPage showToast={showToast} />}
+        {page === "logs" && <LogsPage />}
+      </div>
+      <Toast message={toast.message} type={toast.type} />
+
+      {/* Settings Modal for API URL */}
+      {showSettings && (
+        <div className="modal-overlay" onClick={() => setShowSettings(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Update API URL</h3>
+            <p style={{fontSize:14, color:"var(--gray-600)", marginBottom:16}}>Change your Railway API endpoint if needed.</p>
+            <div className="form-group">
+              <label>Railway API Base URL</label>
+              <input
+                type="url"
+                value={newApiUrl || storedApi}
+                onChange={e => setNewApiUrl(e.target.value)}
+                placeholder="https://your-app.railway.app"
+              />
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setShowSettings(false)}>Cancel</button>
+              <button className="btn btn-green" onClick={handleUpdateApiUrl}>Update & Refresh</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
