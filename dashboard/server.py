@@ -804,7 +804,7 @@ def import_external_image():
     file.save(str(dest_path))
     size_bytes = dest_path.stat().st_size
 
-    log_action(f"Imported external image: {dest_name} ({size_bytes} bytes)")
+    print(f"[import] Imported external image: {dest_name} ({size_bytes} bytes)")
 
     return jsonify({
         "filename": dest_name,
