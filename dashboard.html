@@ -745,7 +745,71 @@ function SettingsPage({ showToast }) {
 
         <button className="btn btn-green" onClick={save} style={{marginTop:16}}>Save Settings</button>
       </div>
+
+      <ChangePasswordSection showToast={showToast} />
     </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// CHANGE PASSWORD SECTION
+// ══════════════════════════════════════════════
+function ChangePasswordSection({ showToast }) {
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const handleChange = async () => {
+    if (!currentPw || !newPw || !confirmPw) {
+      showToast("Please fill in all password fields", "error");
+      return;
+    }
+    if (newPw.length < 8) {
+      showToast("New password must be at least 8 characters", "error");
+      return;
+    }
+    if (newPw !== confirmPw) {
+      showToast("New passwords don't match", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      await api("/change-password", {
+        method: "POST",
+        body: { current_password: currentPw, new_password: newPw },
+      });
+      showToast("Password changed successfully!", "success");
+      setCurrentPw("");
+      setNewPw("");
+      setConfirmPw("");
+    } catch (err) {
+      showToast(err.message || "Failed to change password", "error");
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="table-wrap" style={{padding:24, marginTop:24}}>
+      <h3 style={{marginBottom:20}}>Change Password</h3>
+      <div style={{maxWidth:400}}>
+        <div className="form-group">
+          <label>Current Password</label>
+          <input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)} placeholder="Enter current password" />
+        </div>
+        <div className="form-group">
+          <label>New Password</label>
+          <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} placeholder="At least 8 characters" />
+        </div>
+        <div className="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} placeholder="Re-enter new password" />
+        </div>
+        <button className="btn btn-green" onClick={handleChange} disabled={busy} style={{marginTop:8}}>
+          {busy ? "Changing..." : "Change Password"}
+        </button>
+      </div>
+    </div>
   );
 }
 
