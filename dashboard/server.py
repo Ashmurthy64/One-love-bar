@@ -753,9 +753,8 @@ def generate_image():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/ai/preview/<filename>")
-@login_required
 def preview_image(filename):
-    """Serve a generated image preview."""
+    """Serve a generated image preview (no auth - images are non-sensitive)."""
     safe_name = Path(filename).name  # Prevent path traversal
     return send_from_directory(str(GENERATED_IMAGES_DIR), safe_name)
 
