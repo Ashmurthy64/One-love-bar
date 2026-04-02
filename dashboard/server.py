@@ -241,7 +241,7 @@ def login():
     })
 
 @app.route("/api/change-password", methods=["POST"])
-@require_auth
+@login_required
 def change_password():
     data = request.json or {}
     current_password = data.get("current_password", "")
