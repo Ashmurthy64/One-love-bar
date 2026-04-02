@@ -213,7 +213,7 @@ tr:hover td { background: var(--gray-50); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+const { useState, useEffect, useCallback, useRef } = React;
 
 // ══════════════════════════════════════════════
 // CONFIG & API HELPER
@@ -835,6 +835,8 @@ function AIImagesPage({ showToast }) {
   const [attachPostId, setAttachPostId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [style, setStyle] = useState("tropical beach bar photography, warm golden hour lighting");
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef(null);
 
   const loadGallery = async () => { try { setGallery(await api("/ai/gallery")); } catch(e){} };
   const loadPosts = async () => { try { setPosts(await api("/posts")); } catch(e){} };
@@ -866,10 +868,36 @@ function AIImagesPage({ showToast }) {
     setGenerating(false);
   };
 
+  const importImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const allowed = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowed.includes(file.type)) { showToast("Unsupported format. Use PNG, JPG, or WebP.", "error"); return; }
+    if (file.size > 20 * 1024 * 1024) { showToast("File too large (max 20 MB)", "error"); return; }
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const token = localStorage.getItem("oneloveToken");
+      const res = await fetch(`${API_BASE}/api/ai/import-image`, {
+        method: "POST", body: formData,
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setPreview(data);
+      loadGallery();
+      showToast(`Image imported: ${data.filename}`);
+    } catch(e) { showToast(e.message, "error"); }
+    setImporting(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const openUploadModal = (img) => {
     setUploadModal(img);
-    const name = img.filename.replace(/\.png$/, "").replace(/^ai_/, "post-");
-    setTargetFilename(name + ".png");
+    const ext = img.filename.split(".").pop() || "png";
+    const name = img.filename.replace(/\.[^.]+$/, "").replace(/^(ai|ext)_/, "post-");
+    setTargetFilename(name + "." + ext);
     setAttachPostId("");
   };
 
@@ -958,6 +986,21 @@ function AIImagesPage({ showToast }) {
           <button className="btn btn-green" onClick={generateImage} disabled={generating || !aiConfig.configured}>
             <Icon name="image" /> {generating ? "Generating... (30-60s)" : "Generate Image"}
           </button>
+
+          <div style={{borderTop:"1px solid var(--gray-200)", marginTop:20, paddingTop:20}}>
+            <h3 style={{fontSize:14, fontWeight:600, marginBottom:8, display:"flex", alignItems:"center", gap:8}}>
+              <Icon name="upload" /> Import External Image
+            </h3>
+            <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:12}}>
+              Upload an image from Midjourney, Canva, or anywhere else into your gallery.
+            </p>
+            <input type="file" ref={fileInputRef} accept="image/png,image/jpeg,image/webp" style={{display:"none"}}
+              onChange={importImage} />
+            <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={importing}
+              style={{width:"100%", justifyContent:"center"}}>
+              <Icon name="upload" /> {importing ? "Importing..." : "Choose Image File"}
+            </button>
+          </div>
         </div>
 
         {/* RIGHT: Preview */}
@@ -985,11 +1028,11 @@ function AIImagesPage({ showToast }) {
       {/* Gallery */}
       <div className="table-wrap" style={{padding:20}}>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
-          <h3 style={{fontSize:16, fontWeight:600}}>Generated Images Gallery</h3>
+          <h3 style={{fontSize:16, fontWeight:600}}>Image Gallery</h3>
           <button className="btn btn-outline btn-sm" onClick={loadGallery}>Refresh</button>
         </div>
         {gallery.length === 0 ? (
-          <p style={{color:"var(--gray-400)", fontSize:14, textAlign:"center", padding:24}}>No images generated yet. Use the generator above to create your first image.</p>
+          <p style={{color:"var(--gray-400)", fontSize:14, textAlign:"center", padding:24}}>No images yet. Generate one with DALL-E or import an external image above.</p>
         ) : (
           <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12}}>
             {gallery.map(img => (
