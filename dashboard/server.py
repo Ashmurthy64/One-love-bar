@@ -1391,3 +1391,4 @@ if __name__ == "__main__":
     print(f"  Default login: admin / OneLove2026!")
     print(f"  ======================================\n")
     app.run(host="0.0.0.0", port=port, debug=debug)
+# Campaign Memory v1.0
