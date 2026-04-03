@@ -8,14 +8,14 @@ Now uses JWT authentication for cross-domain API access.
 Frontend is served separately on GitHub Pages at https://ashmurthy64.github.io
 
 Requirements:
-    pip install flask flask-cors requests schedule openai pyjwth
+    pip install flask flask-cors requests schedule openai pyjwt
 
 Run:
     python server.py
-    Then access the API from https://ashmurthy64.github.ioh
+    Then access the API from https://ashmurthy64.github.io
 """
 
-import oshhh
+import os
 import json
 import time
 import threading
