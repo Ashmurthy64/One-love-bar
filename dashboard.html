@@ -488,6 +488,16 @@ function PostsPage({ showToast }) {
     } catch (err) { showToast(err.message, "error"); }
   };
 
+  const ratePost = async (id, rating) => {
+    const currentPost = posts.find(p => p.id === id);
+    const newRating = currentPost?.rating === rating ? "" : rating; // Toggle off if same
+    try {
+      await api(`/posts/${id}/rate`, { method: "POST", body: { rating: newRating } });
+      showToast(newRating ? (newRating === "up" ? "Marked as liked — AI will learn from this!" : "Marked for improvement — AI will adjust") : "Rating cleared", "success");
+      load();
+    } catch (err) { showToast(err.message, "error"); }
+  };
+
   return (
     <>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24}}>
@@ -506,6 +516,9 @@ function PostsPage({ showToast }) {
               <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "facebook")}>Test FB</button>
               <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "instagram")}>Test IG</button>
               <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "whatsapp")}>Test WA</button>
+              <span style={{borderLeft:"1px solid var(--gray-200)", height:24, margin:"0 4px"}}></span>
+              <button className={`btn btn-sm ${p.rating === "up" ? "btn-green" : "btn-outline"}`} onClick={() => ratePost(p.id, "up")} title="AI will create more like this" style={{padding:"4px 8px", fontSize:16}}>👍</button>
+              <button className={`btn btn-sm ${p.rating === "down" ? "btn-red" : "btn-outline"}`} onClick={() => ratePost(p.id, "down")} title="AI will avoid this style" style={{padding:"4px 8px", fontSize:16}}>👎</button>
               <button className="btn btn-red btn-sm" onClick={() => deletePost(p.id)}><Icon name="trash" /></button>
             </div>
           </div>
@@ -776,7 +789,177 @@ function SettingsPage({ showToast }) {
       </div>
 
       <ChangePasswordSection showToast={showToast} />
+      <CampaignBrainSection showToast={showToast} />
     </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// CAMPAIGN BRAIN SECTION (AI Memory)
+// ══════════════════════════════════════════════
+function CampaignBrainSection({ showToast }) {
+  const [ctx, setCtx] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [brandForm, setBrandForm] = useState({});
+  const [campaignForm, setCampaignForm] = useState({});
+
+  const load = async () => {
+    try {
+      const c = await api("/campaign-context");
+      setCtx(c);
+      setBrandForm({
+        vibe: c.brand?.vibe || "",
+        tone_of_voice: c.brand?.tone_of_voice || "",
+        tagline: c.brand?.tagline || "",
+        target_audience: c.brand?.target_audience || "",
+        dos: (c.brand?.dos || []).join("\n"),
+        donts: (c.brand?.donts || []).join("\n"),
+      });
+      setCampaignForm({
+        campaign_phase: c.campaign_phase || "",
+        campaign_notes: c.campaign_notes || "",
+        preferred_image_styles: (c.style_preferences?.preferred_image_styles || []).join(", "),
+        avoided_styles: (c.style_preferences?.avoided_styles || []).join(", "),
+      });
+    } catch(e) { console.error("Failed to load campaign context", e); }
+  };
+  useEffect(() => { load(); }, []);
+
+  const saveBrain = async () => {
+    setSaving(true);
+    try {
+      await api("/campaign-context", { method: "PUT", body: {
+        brand: {
+          vibe: brandForm.vibe,
+          tone_of_voice: brandForm.tone_of_voice,
+          tagline: brandForm.tagline,
+          target_audience: brandForm.target_audience,
+          dos: brandForm.dos.split("\n").map(s => s.trim()).filter(Boolean),
+          donts: brandForm.donts.split("\n").map(s => s.trim()).filter(Boolean),
+        },
+        campaign_phase: campaignForm.campaign_phase,
+        campaign_notes: campaignForm.campaign_notes,
+        style_preferences: {
+          preferred_image_styles: campaignForm.preferred_image_styles.split(",").map(s => s.trim()).filter(Boolean),
+          avoided_styles: campaignForm.avoided_styles.split(",").map(s => s.trim()).filter(Boolean),
+        },
+      }});
+      showToast("Campaign brain updated! AI will use these preferences.", "success");
+      load();
+    } catch(err) { showToast(err.message, "error"); }
+    setSaving(false);
+  };
+
+  const historyCount = ctx?.generation_history?.length || 0;
+  const likedCount = ctx?.generation_history?.filter(h => h.rating === "up").length || 0;
+  const dislikedCount = ctx?.generation_history?.filter(h => h.rating === "down").length || 0;
+
+  return (
+    <div className="table-wrap" style={{padding:24, marginTop:24}}>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer"}} onClick={() => { setExpanded(!expanded); if (!ctx) load(); }}>
+        <h3 style={{margin:0, display:"flex", alignItems:"center", gap:8}}>
+          <span style={{width:20, height:20, display:"inline-flex"}}><Icon name="sparkle" /></span> Campaign Brain (AI Memory)
+        </h3>
+        <div style={{display:"flex", alignItems:"center", gap:12}}>
+          <span style={{fontSize:12, color:"var(--gray-500)"}}>{historyCount} generations{likedCount ? `, ${likedCount} liked` : ""}{dislikedCount ? `, ${dislikedCount} to improve` : ""}</span>
+          <span style={{fontSize:18, transform:expanded?"rotate(180deg)":"rotate(0deg)", transition:"transform 0.2s"}}>▼</span>
+        </div>
+      </div>
+
+      {expanded && ctx && (
+        <div style={{marginTop:20}}>
+          <p style={{fontSize:13, color:"var(--gray-500)", marginBottom:16}}>
+            This is the AI's memory. It remembers your brand voice, style preferences, and learns from your ratings. Every image and caption generation uses this context.
+          </p>
+
+          <h4 style={{marginTop:16, marginBottom:8, color:"var(--green-700)"}}>Brand Voice</h4>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
+            <div className="form-group">
+              <label>Vibe / Mood</label>
+              <input value={brandForm.vibe} onChange={e => setBrandForm({...brandForm, vibe: e.target.value})} />
+            </div>
+            <div className="form-group">
+              <label>Tagline</label>
+              <input value={brandForm.tagline} onChange={e => setBrandForm({...brandForm, tagline: e.target.value})} />
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Tone of Voice</label>
+            <input value={brandForm.tone_of_voice} onChange={e => setBrandForm({...brandForm, tone_of_voice: e.target.value})} />
+          </div>
+          <div className="form-group">
+            <label>Target Audience</label>
+            <input value={brandForm.target_audience} onChange={e => setBrandForm({...brandForm, target_audience: e.target.value})} />
+          </div>
+
+          <h4 style={{marginTop:20, marginBottom:8, color:"var(--green-700)"}}>Creative Guidelines</h4>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
+            <div className="form-group">
+              <label>Do's (one per line)</label>
+              <textarea value={brandForm.dos} onChange={e => setBrandForm({...brandForm, dos: e.target.value})} rows={4} style={{fontSize:13}} />
+            </div>
+            <div className="form-group">
+              <label>Don'ts (one per line)</label>
+              <textarea value={brandForm.donts} onChange={e => setBrandForm({...brandForm, donts: e.target.value})} rows={4} style={{fontSize:13}} />
+            </div>
+          </div>
+
+          <h4 style={{marginTop:20, marginBottom:8, color:"var(--green-700)"}}>Campaign Status</h4>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
+            <div className="form-group">
+              <label>Campaign Phase</label>
+              <select value={campaignForm.campaign_phase} onChange={e => setCampaignForm({...campaignForm, campaign_phase: e.target.value})} style={{padding:"8px 12px", borderRadius:"var(--radius)", border:"1px solid var(--gray-200)"}}>
+                <option value="pre-launch">Pre-Launch (Teaser)</option>
+                <option value="grand-opening">Grand Opening</option>
+                <option value="ongoing">Ongoing / Regular</option>
+                <option value="seasonal">Seasonal Campaign</option>
+                <option value="event">Special Event</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Campaign Notes</label>
+              <input value={campaignForm.campaign_notes} onChange={e => setCampaignForm({...campaignForm, campaign_notes: e.target.value})} placeholder="What's the current focus?" />
+            </div>
+          </div>
+
+          <h4 style={{marginTop:20, marginBottom:8, color:"var(--green-700)"}}>Image Style Preferences</h4>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
+            <div className="form-group">
+              <label>Preferred Styles (comma-separated)</label>
+              <input value={campaignForm.preferred_image_styles} onChange={e => setCampaignForm({...campaignForm, preferred_image_styles: e.target.value})} placeholder="tropical, golden hour, lifestyle" />
+            </div>
+            <div className="form-group">
+              <label>Avoid These Styles (comma-separated)</label>
+              <input value={campaignForm.avoided_styles} onChange={e => setCampaignForm({...campaignForm, avoided_styles: e.target.value})} placeholder="dark, corporate, neon" />
+            </div>
+          </div>
+
+          {historyCount > 0 && (
+            <>
+              <h4 style={{marginTop:20, marginBottom:8, color:"var(--green-700)"}}>AI Generation History ({historyCount} records)</h4>
+              <div style={{maxHeight:200, overflowY:"auto", fontSize:12, border:"1px solid var(--gray-100)", borderRadius:"var(--radius)", padding:8}}>
+                {ctx.generation_history.slice(0, 10).map((h, i) => (
+                  <div key={i} style={{padding:"6px 0", borderBottom: i < 9 ? "1px solid var(--gray-50)" : "none"}}>
+                    <span style={{color:"var(--gray-400)"}}>{h.created_at ? new Date(h.created_at).toLocaleDateString() : ""}</span>
+                    {" "}
+                    <strong>{h.post_id}</strong>
+                    {h.rating === "up" && " 👍"}
+                    {h.rating === "down" && " 👎"}
+                    <br />
+                    <span style={{color:"var(--gray-500)"}}>{h.prompt?.substring(0, 120)}...</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <button className="btn btn-green" onClick={saveBrain} disabled={saving} style={{marginTop:16}}>
+            {saving ? "Saving..." : "Save Campaign Brain"}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 

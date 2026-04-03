@@ -66,10 +66,47 @@ RECIPIENTS_FILE = DATA_DIR / "recipients.json"
 STATE_FILE = DATA_DIR / "agent_state.json"
 LOGS_FILE = DATA_DIR / "post_logs.json"
 USERS_FILE = DATA_DIR / "users.json"
+CAMPAIGN_CONTEXT_FILE = DATA_DIR / "campaign_context.json"
 
 # ══════════════════════════════════════════════
 # DEFAULT DATA
 # ══════════════════════════════════════════════
+DEFAULT_CAMPAIGN_CONTEXT = {
+    "brand": {
+        "name": "One Love Beach Bar",
+        "location": "Playa Ballenas, Las Terrenas, Samaná, Dominican Republic",
+        "vibe": "Warm, tropical, inviting, authentic Caribbean energy",
+        "tagline": "Good vibes, great drinks, right on the beach",
+        "colors": "Warm golds, ocean blues, sunset oranges, lush greens",
+        "target_audience": "Expats, tourists, digital nomads, locals who love beach culture",
+        "tone_of_voice": "Friendly, laid-back, warm but not cheesy. Think 'cool friend who owns a beach bar' not 'corporate resort'",
+        "hashtags_always": ["#OneLoveBeachBar", "#LasTerrenas", "#Samana", "#PlayaBallenas", "#DominicanRepublic"],
+        "hashtags_optional": ["#BeachBar", "#Caribbean", "#TropicalVibes", "#BeachLife", "#IslandLife", "#CocktailBar"],
+        "dos": [
+            "Use warm, golden-hour lighting in images",
+            "Show real beach/ocean scenery when possible",
+            "Include cocktails, palm trees, sunsets as visual motifs",
+            "Keep captions conversational and inviting",
+            "Use emojis sparingly but effectively in FB/IG captions",
+        ],
+        "donts": [
+            "Don't use stock photo aesthetic — keep it authentic",
+            "Don't overuse neon or artificial colors",
+            "Don't make it look like a chain restaurant",
+            "Don't use overly salesy language",
+            "Avoid cliché phrases like 'paradise found' or 'life's a beach'",
+        ],
+    },
+    "campaign_phase": "pre-launch",
+    "campaign_notes": "Currently in coming-soon / teaser phase. Building anticipation before grand opening.",
+    "style_preferences": {
+        "preferred_image_styles": ["tropical beach bar photography", "warm golden hour lighting", "Caribbean lifestyle"],
+        "avoided_styles": ["dark moody", "urban", "corporate"],
+        "preferred_compositions": ["wide beach shots", "close-up cocktails", "sunset silhouettes"],
+    },
+    "generation_history": [],
+}
+
 DEFAULT_CONFIG = {
     "app_id": "1669620497794638",
     "app_secret": os.getenv("META_APP_SECRET", ""),
@@ -168,6 +205,75 @@ def add_log(entry):
     logs.insert(0, entry)
     logs = logs[:100]  # Keep last 100
     save_json(LOGS_FILE, logs)
+
+def get_campaign_context():
+    return load_json(CAMPAIGN_CONTEXT_FILE, DEFAULT_CAMPAIGN_CONTEXT)
+
+def save_campaign_context(ctx):
+    save_json(CAMPAIGN_CONTEXT_FILE, ctx)
+
+def add_generation_record(record):
+    """Add a generation record to campaign context history."""
+    ctx = get_campaign_context()
+    ctx["generation_history"].insert(0, record)
+    ctx["generation_history"] = ctx["generation_history"][:50]  # Keep last 50
+    save_campaign_context(ctx)
+
+def build_campaign_memory_prompt():
+    """Build a system prompt section with campaign memory for GPT calls."""
+    ctx = get_campaign_context()
+    brand = ctx.get("brand", {})
+    posts = get_posts()
+
+    # Brand context
+    lines = [
+        f"BRAND: {brand.get('name', 'One Love Beach Bar')}",
+        f"LOCATION: {brand.get('location', '')}",
+        f"VIBE: {brand.get('vibe', '')}",
+        f"TONE: {brand.get('tone_of_voice', '')}",
+        f"CAMPAIGN PHASE: {ctx.get('campaign_phase', 'pre-launch')}",
+        f"CAMPAIGN NOTES: {ctx.get('campaign_notes', '')}",
+    ]
+
+    # Style preferences
+    prefs = ctx.get("style_preferences", {})
+    if prefs.get("preferred_image_styles"):
+        lines.append(f"PREFERRED STYLES: {', '.join(prefs['preferred_image_styles'])}")
+    if prefs.get("avoided_styles"):
+        lines.append(f"AVOID STYLES: {', '.join(prefs['avoided_styles'])}")
+
+    # Brand dos and don'ts
+    if brand.get("dos"):
+        lines.append("DO: " + " | ".join(brand["dos"]))
+    if brand.get("donts"):
+        lines.append("DON'T: " + " | ".join(brand["donts"]))
+
+    # Recent posts (short-term memory)
+    if posts:
+        lines.append(f"\nPREVIOUS POSTS ({len(posts)} total):")
+        for p in posts[:10]:  # Last 10 posts
+            rating = p.get("rating", "")
+            rating_str = f" [RATED: {'LIKED' if rating == 'up' else 'NEEDS IMPROVEMENT'}]" if rating else ""
+            lines.append(f"  - [{p['id']}] {p.get('fb_caption', p.get('caption', ''))[:120]}...{rating_str}")
+
+    # Recent generation history with feedback
+    history = ctx.get("generation_history", [])
+    liked = [h for h in history if h.get("rating") == "up"]
+    disliked = [h for h in history if h.get("rating") == "down"]
+    if liked:
+        lines.append(f"\nSTYLES/PROMPTS USER LIKED ({len(liked)} examples):")
+        for h in liked[:5]:
+            lines.append(f"  - Prompt: {h.get('prompt', '')[:150]}")
+            if h.get("rating_note"):
+                lines.append(f"    Note: {h['rating_note']}")
+    if disliked:
+        lines.append(f"\nSTYLES/PROMPTS USER DISLIKED ({len(disliked)} examples):")
+        for h in disliked[:5]:
+            lines.append(f"  - Prompt: {h.get('prompt', '')[:150]}")
+            if h.get("rating_note"):
+                lines.append(f"    Note: {h['rating_note']}")
+
+    return "\n".join(lines)
 
 # ══════════════════════════════════════════════
 # JWT AUTH
@@ -657,6 +763,75 @@ def ai_config():
         "github_token_set": bool(config.get("github_token", "")),
     })
 
+# ══════════════════════════════════════════════
+# CAMPAIGN MEMORY ENDPOINTS
+# ══════════════════════════════════════════════
+@app.route("/api/campaign-context", methods=["GET"])
+@login_required
+def get_campaign_context_api():
+    """Get the full campaign context (brand guidelines, history, etc.)."""
+    return jsonify(get_campaign_context())
+
+@app.route("/api/campaign-context", methods=["PUT"])
+@login_required
+def update_campaign_context_api():
+    """Update campaign context fields."""
+    data = request.json or {}
+    ctx = get_campaign_context()
+    # Allow updating specific sections
+    for key in ["brand", "campaign_phase", "campaign_notes", "style_preferences"]:
+        if key in data:
+            if isinstance(data[key], dict) and isinstance(ctx.get(key), dict):
+                ctx[key].update(data[key])
+            else:
+                ctx[key] = data[key]
+    save_campaign_context(ctx)
+    add_log({"time": datetime.now().isoformat(), "action": "campaign_context_updated", "by": request.user.get("name")})
+    return jsonify(ctx)
+
+@app.route("/api/posts/<post_id>/rate", methods=["POST"])
+@login_required
+def rate_post(post_id):
+    """Rate a post (up/down) to teach the AI your preferences."""
+    data = request.json or {}
+    rating = data.get("rating", "")  # "up" or "down" or "" to clear
+    note = data.get("note", "").strip()
+
+    if rating and rating not in ("up", "down"):
+        return jsonify({"error": "Rating must be 'up', 'down', or empty"}), 400
+
+    posts = get_posts()
+    post = next((p for p in posts if p["id"] == post_id), None)
+    if not post:
+        return jsonify({"error": "Post not found"}), 404
+
+    # Update post rating
+    post["rating"] = rating
+    post["rating_note"] = note
+    save_json(POSTS_FILE, posts)
+
+    # Also update generation history if this post has one
+    ctx = get_campaign_context()
+    for h in ctx.get("generation_history", []):
+        if h.get("post_id") == post_id:
+            h["rating"] = rating
+            h["rating_note"] = note
+            break
+    save_campaign_context(ctx)
+
+    add_log({"time": datetime.now().isoformat(), "action": "post_rated", "post_id": post_id, "rating": rating, "note": note, "by": request.user.get("name")})
+    return jsonify({"ok": True, "post_id": post_id, "rating": rating})
+
+@app.route("/api/campaign-context/history", methods=["GET"])
+@login_required
+def get_generation_history():
+    """Get the AI generation history."""
+    ctx = get_campaign_context()
+    return jsonify(ctx.get("generation_history", []))
+
+# ══════════════════════════════════════════════
+# AI IMAGE GENERATION ENDPOINTS
+# ══════════════════════════════════════════════
 @app.route("/api/ai/suggest-prompt", methods=["POST"])
 @login_required
 def suggest_prompt():
@@ -673,7 +848,10 @@ def suggest_prompt():
     if not api_key:
         return jsonify({"error": "OpenAI API key not configured. Go to Settings to add it."}), 400
 
-    # Use GPT to suggest an image prompt
+    # Build campaign memory context
+    memory = build_campaign_memory_prompt()
+
+    # Use GPT to suggest an image prompt — now with full campaign memory
     try:
         resp = http_requests.post(
             "https://api.openai.com/v1/chat/completions",
@@ -681,7 +859,19 @@ def suggest_prompt():
             json={
                 "model": "gpt-4o-mini",
                 "messages": [
-                    {"role": "system", "content": "You are a creative director for One Love Beach Bar in Las Terrenas, Dominican Republic. Generate a DALL-E 3 image prompt for a social media post. The style should be warm, tropical, inviting. Include specific visual details. Keep it under 200 words. Return ONLY the prompt, no explanation."},
+                    {"role": "system", "content": f"""You are the creative director for One Love Beach Bar. Generate a DALL-E 3 image prompt for a social media post.
+
+CAMPAIGN MEMORY (use this to stay consistent and avoid repetition):
+{memory}
+
+RULES:
+- Stay visually consistent with previous posts but bring fresh ideas
+- If the user liked certain styles before, lean into those
+- If the user disliked certain styles, avoid them
+- Don't repeat the same compositions as recent posts
+- Include specific visual details (lighting, angle, objects, mood)
+- Keep it under 200 words
+- Return ONLY the prompt, no explanation"""},
                     {"role": "user", "content": f"Create an image prompt for this post caption:\n\n{caption}\n\nStyle preference: {style}"}
                 ],
                 "max_tokens": 300,
@@ -911,6 +1101,18 @@ def generate_and_attach():
             save_json(POSTS_FILE, posts)
             break
 
+    # Record generation in campaign memory
+    add_generation_record({
+        "post_id": post_id,
+        "prompt": prompt,
+        "revised_prompt": gen_resp.get("revised_prompt", ""),
+        "caption_snippet": next((p.get("fb_caption", "")[:100] for p in posts if p["id"] == post_id), ""),
+        "filename": target_filename,
+        "created_at": datetime.now().isoformat(),
+        "rating": "",
+        "rating_note": "",
+    })
+
     add_log({"time": datetime.now().isoformat(), "action": "ai_full_pipeline", "post_id": post_id, "filename": target_filename, "by": request.user.get("name")})
 
     return jsonify({
@@ -945,7 +1147,10 @@ def create_post_with_ai_image():
     if not api_key:
         return jsonify({"error": "OpenAI API key not configured"}), 400
 
-    # Step 1: Generate a DALL-E prompt from the caption using GPT
+    # Build campaign memory context
+    memory = build_campaign_memory_prompt()
+
+    # Step 1: Generate a DALL-E prompt from the caption using GPT — with campaign memory
     try:
         gpt_resp = http_requests.post(
             "https://api.openai.com/v1/chat/completions",
@@ -953,7 +1158,19 @@ def create_post_with_ai_image():
             json={
                 "model": "gpt-4o-mini",
                 "messages": [
-                    {"role": "system", "content": "You are a creative director for One Love Beach Bar in Las Terrenas, Dominican Republic. Generate a DALL-E 3 image prompt for a social media post. The style should be warm, tropical, inviting. Include specific visual details. Keep it under 200 words. Return ONLY the prompt, no explanation."},
+                    {"role": "system", "content": f"""You are the creative director for One Love Beach Bar. Generate a DALL-E 3 image prompt for a social media post.
+
+CAMPAIGN MEMORY (use this to stay consistent and avoid repetition):
+{memory}
+
+RULES:
+- Stay visually consistent with previous posts but bring fresh ideas
+- If the user liked certain styles before, lean into those
+- If the user disliked certain styles, avoid them
+- Don't repeat the same compositions as recent posts
+- Include specific visual details (lighting, angle, objects, mood)
+- Keep it under 200 words
+- Return ONLY the prompt, no explanation"""},
                     {"role": "user", "content": f"Create an image prompt for this post caption:\n\n{fb_caption}\n\nStyle preference: {style}"}
                 ],
                 "max_tokens": 300,
@@ -985,6 +1202,19 @@ def create_post_with_ai_image():
     }
     posts.append(post)
     save_json(POSTS_FILE, posts)
+
+    # Step 5: Record generation in campaign memory
+    add_generation_record({
+        "post_id": post_id,
+        "prompt": prompt,
+        "revised_prompt": gen_resp.get("revised_prompt", ""),
+        "style": style,
+        "caption_snippet": fb_caption[:100],
+        "filename": upload_resp["filename"],
+        "created_at": datetime.now().isoformat(),
+        "rating": "",
+        "rating_note": "",
+    })
 
     state = get_state()
     state["last_post_index"] = -1
