@@ -15,7 +15,7 @@ Run:
     Then access the API from https://ashmurthy64.github.ioh
 """
 
-import os
+import oshhh
 import json
 import time
 import threading
@@ -603,7 +603,7 @@ def _do_wa_send_image(config, phone, image_url, caption):
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
         json={
             "messaging_product": "whatsapp", "recipient_type": "individual", "to": phone,
-            "type": "image", "image": {"link": image_url, "caption": caption}
+            "type": "template", "template": {"name": "hello_world", "language": {"code": "en_US"}}
         }
     ).json()
 
@@ -615,7 +615,7 @@ def _do_wa_send_text(config, phone, text):
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
         json={
             "messaging_product": "whatsapp", "recipient_type": "individual", "to": phone,
-            "type": "template", "template": {"name": "Hello_World", "language": {"code": "en_US"}}
+            "type": "template", "template": {"name": "hello_world", "language": {"code": "en_US"}}
         }
     ).json()
 
