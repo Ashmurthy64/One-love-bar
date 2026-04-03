@@ -534,9 +534,9 @@ function PostsPage({ showToast }) {
               <div style={{background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:"var(--radius)", padding:12, marginBottom:16}}>
                 <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:14, fontWeight:600}}>
                   <input type="checkbox" checked={autoGenImage} onChange={e => { setAutoGenImage(e.target.checked); if (e.target.checked) setForm({...form, image_file: ""}); }} />
-                  <Icon name="sparkle" /> Auto-generate AI image from caption
+                  <span style={{width:16, height:16, display:"inline-flex", flexShrink:0}}><Icon name="sparkle" /></span> Auto-generate AI image from caption
                 </label>
-                <p style={{fontSize:12, color:"var(--gray-500)", marginTop:4, marginLeft:24}}>
+                <p style={{fontSize:12, color:"var(--gray-500)", marginTop:4, marginLeft:32}}>
                   DALL-E will create an image based on your caption (~$0.04, takes 30-60s)
                 </p>
               </div>
@@ -553,7 +553,7 @@ function PostsPage({ showToast }) {
                 <img src={`https://ashmurthy64.github.io/One-love-bar/images/${form.image_file}`} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
               </div>
             )}
-            {aiProgress && <p style={{fontSize:13, color:"var(--gold)", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:8}}><Icon name="sparkle" /> {aiProgress}</p>}
+            {aiProgress && <p style={{fontSize:13, color:"var(--gold)", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:8}}><span style={{width:16, height:16, display:"inline-flex", flexShrink:0}}><Icon name="sparkle" /></span> {aiProgress}</p>}
             <div className="modal-actions">
               <button className="btn btn-outline" onClick={() => setModal(null)}>Cancel</button>
               <button className="btn btn-green" onClick={save} disabled={saving}>
