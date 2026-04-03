@@ -12,7 +12,7 @@
   --green-light: #e8f5e9;
   --green-dark: #145029;
   --gold: #D4A843;
-  --gold-light: #fff8e1;
+  --gold-light: #fff8e1;h
   --sand: #FFF9F0;
   --red: #e53e3e;
   --red-light: #fff5f5;
@@ -1446,7 +1446,7 @@ function App() {
   const [newApiUrl, setNewApiUrl] = useState("");
 
   useEffect(() => {
-    const storedApi = localStorage.getItem('oneloveDashboardApi');
+    if (!localStorage.getItem('oneloveDashboardApi')) localStorage.setItem('oneloveDashboardApi', 'https://one-love-bar-production.up.railway.app');  const storedApi = localStorage.getItem('oneloveDashboardApi');
     const storedToken = localStorage.getItem('oneloveToken');
 
     if (storedToken && storedApi) {
@@ -1484,10 +1484,10 @@ function App() {
     showToast("API URL updated. Please refresh the page.", "success");
   };
 
-  const storedApi = localStorage.getItem('oneloveDashboardApi');
+  if (!localStorage.getItem('oneloveDashboardApi')) localStorage.setItem('oneloveDashboardApi', 'https://one-love-bar-production.up.railway.app');  const storedApi = localStorage.getItem('oneloveDashboardApi');
 
   if (checking) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}><p>Loading...</p></div>;
-  if (!storedApi) return <SetupScreen onSetup={() => window.location.reload()} />;
+  
   if (!user) return <LoginPage onLogin={(d) => setUser(d)} />;
 
   const pages = [
