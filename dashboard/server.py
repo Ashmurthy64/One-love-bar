@@ -44,7 +44,7 @@ JWT_EXPIRY_HOURS = 24
 # CORS Configuration for GitHub Pages frontend
 CORS(app,
      resources={r"/api/*": {
-         "origins": ["https://ashmurthy64.github.io"],
+         "origins": ["https://ashmurthy64.github.io", "https://onelovebeachbar.com"],
          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
          "allow_headers": ["Content-Type", "Authorization"],
          "expose_headers": ["Content-Type"],
