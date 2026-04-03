@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-One Love Beach Bar — Dashboard Server
+One Love Beach Bar â Dashboard Server
 Flask backend that wraps post_agent.py and serves the web UI.
 Includes DALL-E 3 AI image generation and GitHub Pages upload.
 
@@ -32,9 +32,9 @@ from flask_cors import CORS
 import requests as http_requests
 import jwt
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # APP SETUP
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET", secrets.token_hex(32))
 JWT_SECRET = os.getenv("JWT_SECRET", app.secret_key)
@@ -53,9 +53,9 @@ CORS(app,
      }}
 )
 
-# ══════════════════════════════════════════════
-# DATA FILES — stored as JSON alongside server.py
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
+# DATA FILES â stored as JSON alongside server.py
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
@@ -67,9 +67,9 @@ STATE_FILE = DATA_DIR / "agent_state.json"
 LOGS_FILE = DATA_DIR / "post_logs.json"
 USERS_FILE = DATA_DIR / "users.json"
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # DEFAULT DATA
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 DEFAULT_CONFIG = {
     "app_id": "1669620497794638",
     "app_secret": os.getenv("META_APP_SECRET", ""),
@@ -87,20 +87,20 @@ DEFAULT_CONFIG = {
 DEFAULT_POSTS = [
     {
         "id": "coming_soon",
-        "caption": "Something Special Is Coming\n\nOne Love Beach Bar is almost ready to open its doors on Playa Ballenas. Tropical cocktails, warm vibes and good energy right on the beach.\n\nStay tuned — One Love is coming to Las Terrenas, Samana",
-        "fb_caption": "✦ Something Special Is Coming ✦\n\nOne Love Beach Bar is almost ready to open its doors on Playa Ballenas. 🌴 Tropical cocktails, warm vibes and good energy right on the beach.\n\nStay tuned — One Love is coming to Las Terrenas, Samaná 🇩🇴🍹\n\n#OneLoveBeachBar #LasTerrenas #Samana #PlayaBallenas #ComingSoon #TropicalCocktails #DominicanRepublic #BeachBar #Caribbean",
+        "caption": "Something Special Is Coming\n\nOne Love Beach Bar is almost ready to open its doors on Playa Ballenas. Tropical cocktails, warm vibes and good energy right on the beach.\n\nStay tuned â One Love is coming to Las Terrenas, Samana",
+        "fb_caption": "â¦ Something Special Is Coming â¦\n\nOne Love Beach Bar is almost ready to open its doors on Playa Ballenas. ð´ Tropical cocktails, warm vibes and good energy right on the beach.\n\nStay tuned â One Love is coming to Las Terrenas, SamanÃ¡ ð©ð´ð¹\n\n#OneLoveBeachBar #LasTerrenas #Samana #PlayaBallenas #ComingSoon #TropicalCocktails #DominicanRepublic #BeachBar #Caribbean",
         "image_file": "post1-coming-soon.jpg",
     },
     {
         "id": "good_vibes",
-        "caption": "GOOD VIBES ONLY\n\nLas Terrenas is about to change\n\nThe tropics have a new heartbeat. Crafted cocktails. Warm nights. Real energy. One Love Beach Bar is almost here — are you ready?",
-        "fb_caption": "GOOD VIBES ONLY 🌊☀️\n\nLas Terrenas is about to change ✨\n\nThe tropics have a new heartbeat. Crafted cocktails. Warm nights. Real energy. One Love Beach Bar is almost here — are you ready? 🔥\n\n#GoodVibesOnly #OneLoveBeachBar #LasTerrenas #Samana #BeachVibes #TropicalBar #DominicanRepublic #ComingSoon #PlayaBallenas",
+        "caption": "GOOD VIBES ONLY\n\nLas Terrenas is about to change\n\nThe tropics have a new heartbeat. Crafted cocktails. Warm nights. Real energy. One Love Beach Bar is almost here â are you ready?",
+        "fb_caption": "GOOD VIBES ONLY ðâï¸\n\nLas Terrenas is about to change â¨\n\nThe tropics have a new heartbeat. Crafted cocktails. Warm nights. Real energy. One Love Beach Bar is almost here â are you ready? ð¥\n\n#GoodVibesOnly #OneLoveBeachBar #LasTerrenas #Samana #BeachVibes #TropicalBar #DominicanRepublic #ComingSoon #PlayaBallenas",
         "image_file": "post2-good-vibes.jpg",
     },
     {
         "id": "watch_this_space",
-        "caption": "Las Terrenas - Samana - Dominican Republic\n\nWatch this space...\n\nOne Love Beach Bar is coming to Playa Ballenas. Something truly special is being built right on the beach.\n\nFollow us for updates — One Love is almost here!",
-        "fb_caption": "Las Terrenas · Samaná · Dominican Republic 🇩🇴\n\nWatch this space... 👀\n\nOne Love Beach Bar is coming to Playa Ballenas. Something truly special is being built right on the beach. 🌴🍹\n\nFollow us for updates — One Love is almost here!\n\n#WatchThisSpace #OneLoveBeachBar #LasTerrenas #Samana #PlayaBallenas #BeachBar #ComingSoon #Caribbean #DominicanRepublic",
+        "caption": "Las Terrenas - Samana - Dominican Republic\n\nWatch this space...\n\nOne Love Beach Bar is coming to Playa Ballenas. Something truly special is being built right on the beach.\n\nFollow us for updates â One Love is almost here!",
+        "fb_caption": "Las Terrenas Â· SamanÃ¡ Â· Dominican Republic ð©ð´\n\nWatch this space... ð\n\nOne Love Beach Bar is coming to Playa Ballenas. Something truly special is being built right on the beach. ð´ð¹\n\nFollow us for updates â One Love is almost here!\n\n#WatchThisSpace #OneLoveBeachBar #LasTerrenas #Samana #PlayaBallenas #BeachBar #ComingSoon #Caribbean #DominicanRepublic",
         "image_file": "post3-watch-this-space.jpg",
     },
 ]
@@ -122,9 +122,9 @@ DEFAULT_USERS = {
     }
 }
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # DATA HELPERS
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 def load_json(filepath, default):
     if filepath.exists():
         with open(filepath) as f:
@@ -145,6 +145,8 @@ def get_config():
         config["github_token"] = os.getenv("GITHUB_TOKEN", "")
     if not config.get("github_image_repo"):
         config["github_image_repo"] = os.getenv("GITHUB_IMAGE_REPO", "Ashmurthy64/One-love-bar")
+    if not config.get("page_access_token"):
+        config["page_access_token"] = os.getenv("PAGE_ACCESS_TOKEN", "")
     return config
 
 def get_posts():
@@ -177,9 +179,9 @@ def add_log(entry):
     logs = logs[:100]  # Keep last 100
     save_json(LOGS_FILE, logs)
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # JWT AUTH
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 def create_token(username, name, role):
     """Create a JWT token."""
     payload = {
@@ -299,9 +301,9 @@ def me():
         "role": payload.get("role")
     })
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # DASHBOARD / STATUS
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 @app.route("/api/dashboard")
 @login_required
 def dashboard():
@@ -333,9 +335,9 @@ def dashboard():
         "recent_logs": logs,
     })
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # POSTS CRUD
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 @app.route("/api/posts")
 @login_required
 def list_posts():
@@ -397,9 +399,9 @@ def delete_post(post_id):
     add_log({"time": datetime.now().isoformat(), "action": "post_deleted", "post_id": post_id, "by": request.user.get("name")})
     return jsonify({"ok": True})
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # RECIPIENTS CRUD
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 @app.route("/api/recipients")
 @login_required
 def list_recipients():
@@ -431,14 +433,14 @@ def remove_recipient(phone):
     add_log({"time": datetime.now().isoformat(), "action": "recipient_removed", "phone": phone, "by": request.user.get("name")})
     return jsonify({"ok": True})
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # SCHEDULE / CONFIG
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 @app.route("/api/config")
 @login_required
 def get_config_api():
     config = get_config()
-    # Don't send full token to frontend — just enough to confirm it's set
+    # Don't send full token to frontend â just enough to confirm it's set
     safe = dict(config)
     token = safe.get("page_access_token", "")
     safe["token_preview"] = token[:20] + "..." if len(token) > 20 else "(not set)"
@@ -468,9 +470,9 @@ def update_config():
     add_log({"time": datetime.now().isoformat(), "action": "config_updated", "fields": list(data.keys()), "by": request.user.get("name")})
     return jsonify({"ok": True})
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # POSTING ACTIONS
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 def _do_post_to_facebook(config, caption, image_url):
     token = config["page_access_token"]
     page_id = config["page_id"]
@@ -575,7 +577,7 @@ def post_now():
     report_to = config.get("report_recipient")
     if report_to:
         report = (
-            f"*One Love Beach Bar — Post Report*\n"
+            f"*One Love Beach Bar â Post Report*\n"
             f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
             f"Post: {post['id']}\nTriggered by: {request.user.get('name', 'Dashboard')}\n\n"
             f"Facebook: {results['facebook']}\n"
@@ -638,17 +640,17 @@ def post_single_platform():
     add_log({"time": datetime.now().isoformat(), "action": f"test_{platform}", "post_id": post["id"], "success": result["success"], "by": request.user.get("name")})
     return jsonify(result)
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # LOGS
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 @app.route("/api/logs")
 @login_required
 def list_logs():
     return jsonify(get_logs())
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # AI IMAGE GENERATION (DALL-E 3)
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 GENERATED_IMAGES_DIR = DATA_DIR / "generated_images"
 GENERATED_IMAGES_DIR.mkdir(exist_ok=True)
 
@@ -879,7 +881,7 @@ def upload_to_github():
             add_log({"time": datetime.now().isoformat(), "action": "image_uploaded_github", "filename": target_filename, "url": public_url, "by": request.user.get("name")})
             return jsonify({"url": public_url, "filename": target_filename})
         else:
-            return jsonify({"error": f"GitHub API error: {resp.status_code} — {resp.json().get('message', 'Unknown')}"}), 400
+            return jsonify({"error": f"GitHub API error: {resp.status_code} â {resp.json().get('message', 'Unknown')}"}), 400
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -887,7 +889,7 @@ def upload_to_github():
 @app.route("/api/ai/generate-and-attach", methods=["POST"])
 @login_required
 def generate_and_attach():
-    """Full pipeline: Generate image → Upload to GitHub → Attach to post."""
+    """Full pipeline: Generate image â Upload to GitHub â Attach to post."""
     data = request.json or {}
     prompt = data.get("prompt", "")
     post_id = data.get("post_id", "")
@@ -984,9 +986,9 @@ def upload_to_github_internal(config, source_filename, target_filename):
         return {"error": str(e)}
 
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # SCHEDULER (background thread)
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 scheduler_running = False
 scheduler_thread = None
 
@@ -1029,7 +1031,7 @@ def scheduler_loop():
             report_to = config.get("report_recipient")
             if report_to:
                 report = (
-                    f"*One Love Beach Bar — Post Report*\n"
+                    f"*One Love Beach Bar â Post Report*\n"
                     f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
                     f"Post: {post['id']}\nTriggered by: Scheduler\n\n"
                     f"Facebook: {results['facebook']}\n"
@@ -1076,13 +1078,13 @@ def stop_scheduler():
 def scheduler_status():
     return jsonify({"running": scheduler_running})
 
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 # RUN
-# ══════════════════════════════════════════════
+# ââââââââââââââââââââââââââââââââââââââââââââââ
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("RAILWAY_ENVIRONMENT") is None  # Debug only when running locally
-    print("\n  One Love Beach Bar — Dashboard Server")
+    print("\n  One Love Beach Bar â Dashboard Server")
     print("  ======================================")
     print(f"  Port: {port}")
     print(f"  API Base: http://localhost:{port}/api")
