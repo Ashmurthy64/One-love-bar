@@ -12,7 +12,7 @@
   --green-light: #e8f5e9;
   --green-dark: #145029;
   --gold: #D4A843;
-  --gold-light: #fff8e1;h
+  --gold-light: #fff8e1;
   --sand: #FFF9F0;
   --red: #e53e3e;
   --red-light: #fff5f5;
@@ -297,7 +297,7 @@ function LoginPage({ onLogin }) {
   return (
     <div className="login-page">
       <form className="login-box" onSubmit={handleSubmit}>
-        <h1>ONE LOVE BEACH BAR</h1>
+        <img src="https://ashmurthy64.github.io/One-love-bar/images/one-love-logo.png" alt="One Love Beach Bar" style={{width:190,display:'block',margin:'0 auto 10px'}} />
         <p className="subtitle">Operator Dashboard</p>
         <input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} autoFocus />
         <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
@@ -1414,7 +1414,7 @@ function SetupScreen({ onSetup }) {
   return (
     <div className="login-page">
       <form className="login-box" onSubmit={handleSubmit}>
-        <h1>ONE LOVE BEACH BAR</h1>
+        <img src="https://ashmurthy64.github.io/One-love-bar/images/one-love-logo.png" alt="One Love Beach Bar" style={{width:190,display:'block',margin:'0 auto 10px'}} />
         <p className="subtitle">Setup — Configure API Endpoint</p>
         <div style={{textAlign:"left", background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:8, padding:12, marginBottom:20, fontSize:13}}>
           <strong>First time setup:</strong> Enter your Railway API base URL (e.g., <code style={{fontSize:12, background:"white", padding:"2px 4px", borderRadius:4}}>https://your-app.railway.app</code>)
@@ -1503,7 +1503,7 @@ function App() {
     <div className="app">
       <div className="sidebar">
         <div className="sidebar-logo">
-          <h2>ONE LOVE</h2>
+          <img src="https://ashmurthy64.github.io/One-love-bar/images/one-love-logo.png" alt="One Love" style={{width:'100%',maxWidth:160,borderRadius:6,background:'white',padding:'4px 6px',display:'block',margin:'0 auto 6px'}} />
           <p>Beach Bar Dashboard</p>
         </div>
         <nav>
