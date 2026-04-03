@@ -856,7 +856,7 @@ function CampaignBrainSection({ showToast }) {
   const dislikedCount = ctx?.generation_history?.filter(h => h.rating === "down").length || 0;
 
   return (
-    <div className="table-wrap" style={{padding:24, marginTop:24}}>
+    <div className="table-wrap" style={{padding:24, marginTop:24, overflow:"visible"}}>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer"}} onClick={() => { setExpanded(!expanded); if (!ctx) load(); }}>
         <h3 style={{margin:0, display:"flex", alignItems:"center", gap:8}}>
           <span style={{width:20, height:20, display:"inline-flex"}}><Icon name="sparkle" /></span> Campaign Brain (AI Memory)
