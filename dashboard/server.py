@@ -137,7 +137,15 @@ def save_json(filepath, data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 def get_config():
-    return load_json(CONFIG_FILE, DEFAULT_CONFIG)
+    config = load_json(CONFIG_FILE, DEFAULT_CONFIG)
+    # Env-var fallbacks for secrets (survive Railway container restarts)
+    if not config.get("openai_api_key"):
+        config["openai_api_key"] = os.getenv("OPENAI_API_KEY", "")
+    if not config.get("github_token"):
+        config["github_token"] = os.getenv("GITHUB_TOKEN", "")
+    if not config.get("github_image_repo"):
+        config["github_image_repo"] = os.getenv("GITHUB_IMAGE_REPO", "Ashmurthy64/One-love-bar")
+    return config
 
 def get_posts():
     return load_json(POSTS_FILE, DEFAULT_POSTS)
