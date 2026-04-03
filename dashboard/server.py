@@ -8,11 +8,11 @@ Now uses JWT authentication for cross-domain API access.
 Frontend is served separately on GitHub Pages at https://ashmurthy64.github.io
 
 Requirements:
-    pip install flask flask-cors requests schedule openai pyjwt
+    pip install flask flask-cors requests schedule openai pyjwth
 
 Run:
     python server.py
-    Then access the API from https://ashmurthy64.github.io
+    Then access the API from https://ashmurthy64.github.ioh
 """
 
 import os
@@ -615,7 +615,7 @@ def _do_wa_send_text(config, phone, text):
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
         json={
             "messaging_product": "whatsapp", "recipient_type": "individual", "to": phone,
-            "type": "text", "text": {"preview_url": False, "body": text}
+            "type": "template", "template": {"name": "Hello_World", "language": {"code": "en_US"}}
         }
     ).json()
 
