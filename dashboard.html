@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>One Love Beach Bar â Dashboard</title>
+<title>One Love Beach Bar — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -34,9 +34,9 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); height: 100vh; overflow: hidden; margin: 0; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
 
-/* ââ LOGIN ââ */
+/* ── LOGIN ── */
 .login-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
@@ -61,8 +61,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-5
 .login-box button:hover { background: var(--green-dark); }
 .login-error { color: var(--red); font-size: 13px; margin-top: 8px; }
 
-/* ââ LAYOUT ââ */
-.app { display: flex; height: 100vh; overflow: hidden; }
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
 .sidebar {
   width: 240px; background: var(--green); color: white; padding: 24px 0;
   display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; z-index: 10;
@@ -88,10 +88,10 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-5
 }
 .sidebar-footer .logout-btn:hover { opacity: 1; }
 
-.main { margin-left: 240px; flex: 1; padding: 32px; max-width: 1100px; height: 100vh; overflow-y: auto; box-sizing: border-box; }
+.main { margin-left: 240px; flex: 1; padding: 32px; max-width: 1100px; }
 .page-title { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 24px; letter-spacing: -0.5px; }
 
-/* ââ CARDS ââ */
+/* ── CARDS ── */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
 .card {
   background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
@@ -103,7 +103,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-5
 .card.gold { border-left: 4px solid var(--gold); }
 .card.blue { border-left: 4px solid var(--blue); }
 
-/* ââ TABLE ââ */
+/* ── TABLE ── */
 .table-wrap {
   background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px;
 }
@@ -118,7 +118,7 @@ td { padding: 12px 20px; font-size: 14px; border-bottom: 1px solid var(--gray-10
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--gray-50); }
 
-/* ââ BUTTONS ââ */
+/* ── BUTTONS ── */
 .btn {
   padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
   cursor: pointer; border: none; font-family: inherit; transition: all 0.15s;
@@ -135,7 +135,7 @@ tr:hover td { background: var(--gray-50); }
 .btn-sm { padding: 6px 12px; font-size: 12px; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ââ FORMS ââ */
+/* ── FORMS ── */
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
 .form-group input, .form-group textarea, .form-group select {
@@ -146,7 +146,7 @@ tr:hover td { background: var(--gray-50); }
 .form-group textarea { min-height: 100px; resize: vertical; }
 .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
-/* ââ MODAL ââ */
+/* ── MODAL ── */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -158,7 +158,7 @@ tr:hover td { background: var(--gray-50); }
 .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
-/* ââ BADGE ââ */
+/* ── BADGE ── */
 .badge {
   display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600;
 }
@@ -166,7 +166,7 @@ tr:hover td { background: var(--gray-50); }
 .badge-red { background: var(--red-light); color: var(--red); }
 .badge-gold { background: var(--gold-light); color: #8B6914; }
 
-/* ââ POST CARD ââ */
+/* ── POST CARD ── */
 .post-card {
   background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
   margin-bottom: 16px; display: flex; gap: 0;
@@ -179,13 +179,13 @@ tr:hover td { background: var(--gray-50); }
 .post-card-body p { font-size: 13px; color: var(--gray-500); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .post-card-actions { display: flex; gap: 6px; margin-top: 10px; }
 
-/* ââ STATUS DOT ââ */
+/* ── STATUS DOT ── */
 .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
 .status-dot.green { background: #22c55e; }
 .status-dot.red { background: var(--red); }
 .status-dot.yellow { background: var(--gold); }
 
-/* ââ TOAST ââ */
+/* ── TOAST ── */
 .toast {
   position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 8px;
   background: var(--gray-800); color: white; font-size: 14px; font-weight: 500;
@@ -195,7 +195,7 @@ tr:hover td { background: var(--gray-50); }
 .toast.error { background: var(--red); }
 @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* ââ RESPONSIVE ââ */
+/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .sidebar { width: 60px; padding: 16px 0; }
   .sidebar-logo h2, .sidebar-logo p, .nav-item span, .sidebar-footer .user-name { display: none; }
@@ -215,9 +215,9 @@ tr:hover td { background: var(--gray-50); }
 <script type="text/babel">
 const { useState, useEffect, useCallback, useRef } = React;
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // CONFIG & API HELPER
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 const API_BASE = localStorage.getItem('oneloveDashboardApi') || '';
 
 const api = async (path, options = {}) => {
@@ -236,9 +236,9 @@ const api = async (path, options = {}) => {
   return data;
 };
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // ICONS (inline SVG)
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 const Icon = ({ name }) => {
   const icons = {
     home: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>,
@@ -260,18 +260,18 @@ const Icon = ({ name }) => {
   return icons[name] || null;
 };
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // TOAST
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 let toastTimeout;
 function Toast({ message, type }) {
   if (!message) return null;
   return <div className={`toast ${type}`}>{message}</div>;
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // LOGIN PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function LoginPage({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -308,9 +308,9 @@ function LoginPage({ onLogin }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // DASHBOARD PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function DashboardPage({ showToast }) {
   const [data, setData] = useState(null);
   const [posting, setPosting] = useState(false);
@@ -331,7 +331,7 @@ function DashboardPage({ showToast }) {
     setPosting(true);
     try {
       const r = await api("/post-now", { method: "POST", body: {} });
-      showToast(`Posted "${r.post_id}" â FB: ${r.facebook}, IG: ${r.instagram}, WA: ${r.whatsapp}`, "success");
+      showToast(`Posted "${r.post_id}" — FB: ${r.facebook}, IG: ${r.instagram}, WA: ${r.whatsapp}`, "success");
       load();
     } catch (err) { showToast(err.message, "error"); }
     setPosting(false);
@@ -428,25 +428,38 @@ function DashboardPage({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // POSTS PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function PostsPage({ showToast }) {
   const [posts, setPosts] = useState([]);
-  const [modal, setModal] = useState(null); // "new" | {editing post}
+  const [modal, setModal] = useState(null); // "new" | "edit"
   const [form, setForm] = useState({ id: "", caption: "", fb_caption: "", image_file: "" });
   const [saving, setSaving] = useState(false);
+  const [autoGenImage, setAutoGenImage] = useState(false);
+  const [aiProgress, setAiProgress] = useState("");
 
   const load = async () => { try { setPosts(await api("/posts")); } catch(e){} };
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setForm({ id: "", caption: "", fb_caption: "", image_file: "" }); setModal("new"); };
-  const openEdit = (p) => { setForm({ ...p }); setModal("edit"); };
+  const openNew = () => { setForm({ id: "", caption: "", fb_caption: "", image_file: "" }); setAutoGenImage(false); setAiProgress(""); setModal("new"); };
+  const openEdit = (p) => { setForm({ ...p }); setAutoGenImage(false); setAiProgress(""); setModal("edit"); };
 
   const save = async () => {
     setSaving(true);
     try {
-      if (modal === "new") {
+      if (modal === "new" && autoGenImage && !form.image_file) {
+        // Auto-generate AI image pipeline
+        if (!form.caption || !form.fb_caption) { showToast("Enter both captions first", "error"); setSaving(false); return; }
+        setAiProgress("Generating image prompt from caption...");
+        setAiProgress("Generating AI image & uploading (30-60s)...");
+        const res = await api("/posts/create-with-ai-image", { method: "POST", body: {
+          id: form.id, caption: form.caption, fb_caption: form.fb_caption,
+        }});
+        if (res.error) throw new Error(res.error);
+        showToast("Post created with AI image!", "success");
+        setAiProgress("");
+      } else if (modal === "new") {
         await api("/posts", { method: "POST", body: form });
         showToast("Post created!", "success");
       } else {
@@ -455,7 +468,7 @@ function PostsPage({ showToast }) {
       }
       setModal(null);
       load();
-    } catch (err) { showToast(err.message, "error"); }
+    } catch (err) { showToast(err.message, "error"); setAiProgress(""); }
     setSaving(false);
   };
 
@@ -517,19 +530,35 @@ function PostsPage({ showToast }) {
               <label>Facebook/Instagram Caption (with emojis and #hashtags)</label>
               <textarea value={form.fb_caption} onChange={e => setForm({...form, fb_caption: e.target.value})} placeholder="The text with emojis and hashtags..." />
             </div>
-            <div className="form-group">
-              <label>Image Filename</label>
-              <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg" />
-              <p className="form-hint">Upload your image to github.com/ashmurthy64/One-love-bar/images/ first</p>
-            </div>
-            {form.image_file && (
+            {modal === "new" && (
+              <div style={{background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:"var(--radius)", padding:12, marginBottom:16}}>
+                <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:14, fontWeight:600}}>
+                  <input type="checkbox" checked={autoGenImage} onChange={e => { setAutoGenImage(e.target.checked); if (e.target.checked) setForm({...form, image_file: ""}); }} />
+                  <Icon name="sparkle" /> Auto-generate AI image from caption
+                </label>
+                <p style={{fontSize:12, color:"var(--gray-500)", marginTop:4, marginLeft:24}}>
+                  DALL-E will create an image based on your caption (~$0.04, takes 30-60s)
+                </p>
+              </div>
+            )}
+            {!autoGenImage && (
+              <div className="form-group">
+                <label>Image Filename</label>
+                <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg" />
+                <p className="form-hint">Upload your image via AI Images tab or to github.com/ashmurthy64/One-love-bar/images/</p>
+              </div>
+            )}
+            {form.image_file && !autoGenImage && (
               <div style={{marginBottom:16}}>
                 <img src={`https://ashmurthy64.github.io/One-love-bar/images/${form.image_file}`} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
               </div>
             )}
+            {aiProgress && <p style={{fontSize:13, color:"var(--gold)", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:8}}><Icon name="sparkle" /> {aiProgress}</p>}
             <div className="modal-actions">
               <button className="btn btn-outline" onClick={() => setModal(null)}>Cancel</button>
-              <button className="btn btn-green" onClick={save} disabled={saving}>{saving ? "Saving..." : "Save Post"}</button>
+              <button className="btn btn-green" onClick={save} disabled={saving}>
+                {saving ? (autoGenImage ? "Creating with AI..." : "Saving...") : (autoGenImage && !form.image_file ? "Create Post with AI Image" : "Save Post")}
+              </button>
             </div>
           </div>
         </div>
@@ -538,9 +567,9 @@ function PostsPage({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // RECIPIENTS PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function RecipientsPage({ showToast }) {
   const [recipients, setRecipients] = useState([]);
   const [modal, setModal] = useState(false);
@@ -627,9 +656,9 @@ function RecipientsPage({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // SETTINGS PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function SettingsPage({ showToast }) {
   const [config, setConfig] = useState(null);
   const [form, setForm] = useState({});
@@ -751,9 +780,9 @@ function SettingsPage({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // CHANGE PASSWORD SECTION
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function ChangePasswordSection({ showToast }) {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -813,12 +842,12 @@ function ChangePasswordSection({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // LOGS PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // AI IMAGES PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function AIImagesPage({ showToast }) {
   const [prompt, setPrompt] = useState("");
   const [caption, setCaption] = useState("");
@@ -834,6 +863,8 @@ function AIImagesPage({ showToast }) {
   const [targetFilename, setTargetFilename] = useState("");
   const [attachPostId, setAttachPostId] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [createNewPost, setCreateNewPost] = useState(false);
+  const [newPostForm, setNewPostForm] = useState({ id: "", caption: "", fb_caption: "" });
   const [style, setStyle] = useState("tropical beach bar photography, warm golden hour lighting");
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef(null);
@@ -899,10 +930,15 @@ function AIImagesPage({ showToast }) {
     const name = img.filename.replace(/\.[^.]+$/, "").replace(/^(ai|ext)_/, "post-");
     setTargetFilename(name + "." + ext);
     setAttachPostId("");
+    setCreateNewPost(false);
+    setNewPostForm({ id: "", caption: "", fb_caption: "" });
   };
 
   const uploadAndAttach = async () => {
     if (!targetFilename.trim()) { showToast("Enter a filename", "error"); return; }
+    if (createNewPost && (!newPostForm.id || !newPostForm.caption || !newPostForm.fb_caption)) {
+      showToast("Fill in all post fields (ID, WhatsApp caption, FB/IG caption)", "error"); return;
+    }
     setUploading(true);
     try {
       // Upload to GitHub Pages
@@ -910,8 +946,18 @@ function AIImagesPage({ showToast }) {
         filename: uploadModal.filename, target_filename: targetFilename,
       }});
       if (res.error) throw new Error(res.error);
-      // If a post was selected, attach the image to it
-      if (attachPostId) {
+
+      if (createNewPost) {
+        // Create a brand new post with this image
+        await api("/posts", { method: "POST", body: {
+          id: newPostForm.id.trim().toLowerCase().replace(/\s+/g, "_"),
+          caption: newPostForm.caption,
+          fb_caption: newPostForm.fb_caption,
+          image_file: targetFilename,
+        }});
+        showToast(`Post "${newPostForm.id}" created with image!`, "success");
+      } else if (attachPostId) {
+        // Attach to existing post
         await api(`/posts/${attachPostId}`, { method: "PUT", body: { image_file: targetFilename } });
         showToast(`Uploaded & attached to post "${attachPostId}"!`);
       } else {
@@ -942,7 +988,7 @@ function AIImagesPage({ showToast }) {
           </h3>
 
           <div className="form-group">
-            <label>Post Caption (optional â helps AI suggest a prompt)</label>
+            <label>Post Caption (optional — helps AI suggest a prompt)</label>
             <textarea value={caption} onChange={e => setCaption(e.target.value)}
               placeholder="Paste your post caption here and click 'Suggest Prompt' to get an AI-generated image prompt..."
               style={{minHeight:80}} />
@@ -1064,17 +1110,52 @@ function AIImagesPage({ showToast }) {
               <div className="form-hint">This will be saved at: {aiConfig.github_repo ? `https://ashmurthy64.github.io/One-love-bar/images/${targetFilename}` : "(configure GitHub repo in settings)"}</div>
             </div>
             <div className="form-group">
-              <label>Attach to Campaign Post (optional)</label>
-              <select value={attachPostId} onChange={e => setAttachPostId(e.target.value)}>
-                <option value="">â Don't attach to a post â</option>
-                {posts.map(p => <option key={p.id} value={p.id}>{p.id}</option>)}
-              </select>
-              <div className="form-hint">If selected, this image will replace the current image for that post.</div>
+              <label>What do you want to do with this image?</label>
+              <div style={{display:"flex", gap:8, marginBottom:12}}>
+                <button className={`btn btn-sm ${!createNewPost && !attachPostId ? "btn-green" : "btn-outline"}`}
+                  onClick={() => { setCreateNewPost(false); setAttachPostId(""); }}>
+                  Just Upload
+                </button>
+                <button className={`btn btn-sm ${!createNewPost && attachPostId ? "btn-green" : "btn-outline"}`}
+                  onClick={() => { setCreateNewPost(false); setAttachPostId(posts[0]?.id || ""); }}>
+                  Attach to Existing Post
+                </button>
+                <button className={`btn btn-sm ${createNewPost ? "btn-green" : "btn-outline"}`}
+                  onClick={() => { setCreateNewPost(true); setAttachPostId(""); }}>
+                  <Icon name="plus" /> Create New Post
+                </button>
+              </div>
+
+              {!createNewPost && attachPostId !== "" && (
+                <div>
+                  <select value={attachPostId} onChange={e => setAttachPostId(e.target.value)}>
+                    {posts.map(p => <option key={p.id} value={p.id}>{p.id}</option>)}
+                  </select>
+                  <div className="form-hint">This image will replace the current image for that post.</div>
+                </div>
+              )}
+
+              {createNewPost && (
+                <div style={{background:"var(--gray-50)", borderRadius:8, padding:12, border:"1px solid var(--gray-200)"}}>
+                  <div className="form-group" style={{marginBottom:8}}>
+                    <label style={{fontSize:12}}>Post ID (short name, no spaces)</label>
+                    <input value={newPostForm.id} onChange={e => setNewPostForm({...newPostForm, id: e.target.value})} placeholder="e.g. grand_opening" style={{fontSize:13}} />
+                  </div>
+                  <div className="form-group" style={{marginBottom:8}}>
+                    <label style={{fontSize:12}}>WhatsApp Caption</label>
+                    <textarea value={newPostForm.caption} onChange={e => setNewPostForm({...newPostForm, caption: e.target.value})} placeholder="Clean text for WhatsApp..." style={{fontSize:13, minHeight:60}} />
+                  </div>
+                  <div className="form-group" style={{marginBottom:0}}>
+                    <label style={{fontSize:12}}>Facebook/Instagram Caption</label>
+                    <textarea value={newPostForm.fb_caption} onChange={e => setNewPostForm({...newPostForm, fb_caption: e.target.value})} placeholder="With emojis and #hashtags..." style={{fontSize:13, minHeight:60}} />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="modal-actions">
               <button className="btn btn-outline" onClick={() => setUploadModal(null)}>Cancel</button>
               <button className="btn btn-green" onClick={uploadAndAttach} disabled={uploading}>
-                <Icon name="upload" /> {uploading ? "Uploading..." : "Upload & Save"}
+                <Icon name="upload" /> {uploading ? "Uploading..." : (createNewPost ? "Upload & Create Post" : (attachPostId ? "Upload & Attach" : "Upload & Save"))}
               </button>
             </div>
           </div>
@@ -1084,9 +1165,9 @@ function AIImagesPage({ showToast }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // LOGS PAGE
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function LogsPage() {
   const [logs, setLogs] = useState([]);
   const load = async () => { try { setLogs(await api("/logs")); } catch(e){} };
@@ -1121,9 +1202,9 @@ function LogsPage() {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // SETUP SCREEN
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function SetupScreen({ onSetup }) {
   const [apiUrl, setApiUrl] = useState("");
   const [error, setError] = useState("");
@@ -1151,7 +1232,7 @@ function SetupScreen({ onSetup }) {
     <div className="login-page">
       <form className="login-box" onSubmit={handleSubmit}>
         <h1>ONE LOVE BEACH BAR</h1>
-        <p className="subtitle">Setup â Configure API Endpoint</p>
+        <p className="subtitle">Setup — Configure API Endpoint</p>
         <div style={{textAlign:"left", background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:8, padding:12, marginBottom:20, fontSize:13}}>
           <strong>First time setup:</strong> Enter your Railway API base URL (e.g., <code style={{fontSize:12, background:"white", padding:"2px 4px", borderRadius:4}}>https://your-app.railway.app</code>)
         </div>
@@ -1170,9 +1251,9 @@ function SetupScreen({ onSetup }) {
   );
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 // APP
-// ââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════
 function App() {
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
