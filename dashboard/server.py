@@ -110,7 +110,7 @@ DEFAULT_CAMPAIGN_CONTEXT = {
 DEFAULT_CONFIG = {
     "app_id": "1669620497794638",
     "app_secret": os.getenv("META_APP_SECRET", ""),
-    "page_access_token": os.getenv("PAGE_ACCESS_TOKEN", "EAAXugtCuRk4BROJpyFxoJN6uohZAe7KdCectbYHdLYhmaficZCkdiCyQXX369Vx7CBZB0cGZAY6stp2JGtvcNbWbvqWqW3TYWa42ahQOsR2gyXkJNICZAAW7vPyJaxeA3Pv3BZAFfLuOk3LLkHWzgppXOdUfkN6dqq89uMcPZCfMiMPLZAq7Fc6ZADsbONvp7NU7gmAZDZD"),
+    "page_access_token": os.getenv("PAGE_ACCESS_TOKEN", ""),
     "page_id": os.getenv("PAGE_ID", "1005826949287918"),
     "instagram_account_id": os.getenv("IG_ACCOUNT_ID", "17841439106843704"),
     "wa_phone_number_id": os.getenv("WA_PHONE_NUMBER_ID", "990492627489867"),

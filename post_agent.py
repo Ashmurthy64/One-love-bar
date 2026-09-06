@@ -31,7 +31,7 @@ CONFIG = {
     # Page Access Token (System User token — never expires)
     # NOTE: This token must have whatsapp_business_messaging permission
     #       for WhatsApp to work. Add it in Meta Business Suite > System Users.
-    "page_access_token": os.getenv("PAGE_ACCESS_TOKEN", "EAAXugtCuRk4BROJpyFxoJN6uohZAe7KdCectbYHdLYhmaficZCkdiCyQXX369Vx7CBZB0cGZAY6stp2JGtvcNbWbvqWqW3TYWa42ahQOsR2gyXkJNICZAAW7vPyJaxeA3Pv3BZAFfLuOk3LLkHWzgppXOdUfkN6dqq89uMcPZCfMiMPLZAq7Fc6ZADsbONvp7NU7gmAZDZD"),
+    "page_access_token": os.getenv("PAGE_ACCESS_TOKEN", ""),
 
     # Facebook Page ID (One Love Beach Bar)
     "page_id": os.getenv("PAGE_ID", "1005826949287918"),
