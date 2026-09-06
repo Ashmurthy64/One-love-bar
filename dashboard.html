@@ -244,6 +244,17 @@ const api = async (path, options = {}) => {
 };
 
 // ══════════════════════════════════════════════
+// MEDIA (images + video share one pipeline)
+// ══════════════════════════════════════════════
+const MEDIA_BASE = "https://ashmurthy64.github.io/One-love-bar/images/";
+const isVideo = (name) => /\.(mp4|mov|m4v)$/i.test(name || "");
+// Renders <video> for video filenames/URLs and <img> otherwise, with the same className/style.
+const Media = ({ src, className, style, alt, onError }) => isVideo(src)
+  ? <video className={className} style={style} src={src} controls muted playsInline preload="metadata" />
+  : <img className={className} style={style} src={src} alt={alt || ""} onError={onError} />;
+const VideoBadge = () => <span style={{fontSize:10, fontWeight:700, letterSpacing:0.5, background:"var(--green-dark, #0b3d2e)", color:"#fff", borderRadius:4, padding:"2px 6px", marginLeft:8, verticalAlign:"middle"}}>VIDEO</span>;
+
+// ══════════════════════════════════════════════
 // ICONS (inline SVG)
 // ══════════════════════════════════════════════
 const Icon = ({ name }) => {
@@ -404,7 +415,7 @@ function DashboardPage({ showToast }) {
             <h3>Up Next: {next_post.id}</h3>
           </div>
           <div style={{padding:16, display:"flex", gap:16, alignItems:"center"}}>
-            <img src={next_post.image_url} style={{width:80, height:80, borderRadius:8, objectFit:"cover", background:"var(--gray-200)"}} onError={e => e.target.style.display="none"} />
+            <Media src={next_post.image_url} style={{width:80, height:80, borderRadius:8, objectFit:"cover", background:"var(--gray-200)"}} onError={e => e.target.style.display="none"} />
             <p style={{fontSize:14, color:"var(--gray-600)"}}>This post will be published next when the scheduler fires or you click "Post Now".</p>
           </div>
         </div>
@@ -514,9 +525,9 @@ function PostsPage({ showToast }) {
 
       {posts.map(p => (
         <div className="post-card" key={p.id}>
-          <img className="post-card-img" src={p.image_url} alt={p.id} onError={e => { e.target.src = ""; e.target.style.background="var(--gray-200)"; }} />
+          <Media className="post-card-img" src={p.image_url} alt={p.id} onError={e => { e.target.src = ""; e.target.style.background="var(--gray-200)"; }} />
           <div className="post-card-body">
-            <h4>{p.id}</h4>
+            <h4>{p.id}{isVideo(p.image_file) && <VideoBadge />}</h4>
             <p>{p.caption}</p>
             <div className="post-card-actions">
               <button className="btn btn-outline btn-sm" onClick={() => openEdit(p)}><Icon name="edit" /> Edit</button>
@@ -563,14 +574,14 @@ function PostsPage({ showToast }) {
             )}
             {!autoGenImage && (
               <div className="form-group">
-                <label>Image Filename</label>
-                <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg" />
-                <p className="form-hint">Upload your image via AI Images tab or to github.com/ashmurthy64/One-love-bar/images/</p>
+                <label>Image or Video Filename</label>
+                <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg or venue-tour.mp4" />
+                <p className="form-hint">Upload via the Media tab (file, URL, or Google Drive link) or directly to github.com/ashmurthy64/One-love-bar/images/. Videos post to Facebook as a video and to Instagram as a Reel.</p>
               </div>
             )}
             {form.image_file && !autoGenImage && (
               <div style={{marginBottom:16}}>
-                <img src={`https://ashmurthy64.github.io/One-love-bar/images/${form.image_file}`} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
+                <Media src={MEDIA_BASE + form.image_file} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
               </div>
             )}
             {aiProgress && <p style={{fontSize:13, color:"var(--gold)", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:8}}><span style={{width:16, height:16, display:"inline-flex", flexShrink:0}}><Icon name="sparkle" /></span> {aiProgress}</p>}
@@ -1057,6 +1068,8 @@ function AIImagesPage({ showToast }) {
   const [newPostForm, setNewPostForm] = useState({ id: "", caption: "", fb_caption: "" });
   const [style, setStyle] = useState("tropical beach bar photography, warm golden hour lighting");
   const [importing, setImporting] = useState(false);
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [importingUrl, setImportingUrl] = useState(false);
   const fileInputRef = useRef(null);
 
   const loadGallery = async () => { try { setGallery(await api("/ai/gallery")); } catch(e){} };
@@ -1092,9 +1105,11 @@ function AIImagesPage({ showToast }) {
   const importImage = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const allowed = ["image/png", "image/jpeg", "image/webp"];
-    if (!allowed.includes(file.type)) { showToast("Unsupported format. Use PNG, JPG, or WebP.", "error"); return; }
-    if (file.size > 20 * 1024 * 1024) { showToast("File too large (max 20 MB)", "error"); return; }
+    const isVid = file.type.startsWith("video/") || isVideo(file.name);
+    const allowed = ["image/png", "image/jpeg", "image/webp", "video/mp4", "video/quicktime", "video/x-m4v"];
+    if (!allowed.includes(file.type) && !isVideo(file.name)) { showToast("Unsupported format. Use PNG, JPG, WebP, MP4 or MOV.", "error"); return; }
+    const maxMb = isVid ? (aiConfig.max_video_mb || 60) : (aiConfig.max_image_mb || 20);
+    if (file.size > maxMb * 1024 * 1024) { showToast(`File too large (max ${maxMb} MB)`, "error"); return; }
     setImporting(true);
     try {
       const formData = new FormData();
@@ -1108,10 +1123,25 @@ function AIImagesPage({ showToast }) {
       if (data.error) throw new Error(data.error);
       setPreview(data);
       loadGallery();
-      showToast(`Image imported: ${data.filename}`);
+      showToast(`${data.media_type === "video" ? "Video" : "Image"} imported: ${data.filename}`);
     } catch(e) { showToast(e.message, "error"); }
     setImporting(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const importFromUrl = async () => {
+    const url = mediaUrl.trim();
+    if (!url) { showToast("Paste a media URL or Google Drive share link first", "error"); return; }
+    setImportingUrl(true);
+    try {
+      const data = await api("/ai/import-url", { method: "POST", body: { url } });
+      if (data.error) throw new Error(data.error);
+      setPreview(data);
+      setMediaUrl("");
+      loadGallery();
+      showToast(`${data.media_type === "video" ? "Video" : "Image"} imported: ${data.filename}`);
+    } catch(e) { showToast(e.message, "error"); }
+    setImportingUrl(false);
   };
 
   const openUploadModal = (img) => {
@@ -1136,22 +1166,23 @@ function AIImagesPage({ showToast }) {
         filename: uploadModal.filename, target_filename: targetFilename,
       }});
       if (res.error) throw new Error(res.error);
+      // The server sanitizes the name and forces the right extension — attach what actually got uploaded.
+      const savedName = res.filename || targetFilename;
+      const kind = isVideo(savedName) ? "video" : "image";
 
       if (createNewPost) {
-        // Create a brand new post with this image
         await api("/posts", { method: "POST", body: {
           id: newPostForm.id.trim().toLowerCase().replace(/\s+/g, "_"),
           caption: newPostForm.caption,
           fb_caption: newPostForm.fb_caption,
-          image_file: targetFilename,
+          image_file: savedName,
         }});
-        showToast(`Post "${newPostForm.id}" created with image!`, "success");
+        showToast(`Post "${newPostForm.id}" created with ${kind}!`, "success");
       } else if (attachPostId) {
-        // Attach to existing post
-        await api(`/posts/${attachPostId}`, { method: "PUT", body: { image_file: targetFilename } });
-        showToast(`Uploaded & attached to post "${attachPostId}"!`);
+        await api(`/posts/${attachPostId}`, { method: "PUT", body: { image_file: savedName } });
+        showToast(`Uploaded & attached ${kind} to post "${attachPostId}"!`);
       } else {
-        showToast(`Uploaded to GitHub Pages: ${targetFilename}`);
+        showToast(`Uploaded to GitHub Pages: ${savedName}`);
       }
       setUploadModal(null);
       loadPosts();
@@ -1161,7 +1192,7 @@ function AIImagesPage({ showToast }) {
 
   return (
     <>
-      <h1 className="page-title">AI Image Generator</h1>
+      <h1 className="page-title">Media — AI Images & Video</h1>
 
       {!aiConfig.configured && (
         <div style={{background:"var(--gold-light)", border:"1px solid var(--gold)", borderRadius:"var(--radius)", padding:16, marginBottom:24, fontSize:14}}>
@@ -1225,17 +1256,28 @@ function AIImagesPage({ showToast }) {
 
           <div style={{borderTop:"1px solid var(--gray-200)", marginTop:20, paddingTop:20}}>
             <h3 style={{fontSize:14, fontWeight:600, marginBottom:8, display:"flex", alignItems:"center", gap:8}}>
-              <Icon name="upload" /> Import External Image
+              <Icon name="upload" /> Import Image or Video
             </h3>
             <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:12}}>
-              Upload an image from Midjourney, Canva, or anywhere else into your gallery.
+              Upload a photo or video from your phone, Midjourney, Canva, or anywhere else. Images up to {aiConfig.max_image_mb || 20} MB, videos (MP4/MOV) up to {aiConfig.max_video_mb || 60} MB.
             </p>
-            <input type="file" ref={fileInputRef} accept="image/png,image/jpeg,image/webp" style={{display:"none"}}
+            <input type="file" ref={fileInputRef} accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,.mp4,.mov,.m4v" style={{display:"none"}}
               onChange={importImage} />
             <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={importing}
               style={{width:"100%", justifyContent:"center"}}>
-              <Icon name="upload" /> {importing ? "Importing..." : "Choose Image File"}
+              <Icon name="upload" /> {importing ? "Importing..." : "Choose Image or Video File"}
             </button>
+
+            <p style={{fontSize:12, color:"var(--gray-500)", margin:"16px 0 8px"}}>
+              Or paste a link — a direct image/video URL, or a <strong>Google Drive share link</strong> (file must be set to "Anyone with the link"). Team drop-box: the <em>One Love / Social Media Videos</em> Drive folder.
+            </p>
+            <div style={{display:"flex", gap:8}}>
+              <input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} placeholder="https://drive.google.com/file/d/…/view"
+                style={{flex:1}} onKeyDown={e => { if (e.key === "Enter") importFromUrl(); }} />
+              <button className="btn btn-outline" onClick={importFromUrl} disabled={importingUrl || !mediaUrl.trim()}>
+                {importingUrl ? "Fetching..." : "Import from Link"}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1246,9 +1288,9 @@ function AIImagesPage({ showToast }) {
           </h3>
           {preview ? (
             <div>
-              <img src={API_BASE + preview.preview_url} alt="Generated" style={{width:"100%", borderRadius:8, marginBottom:12}} />
-              <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:8}}><strong>Revised prompt:</strong> {preview.revised_prompt}</p>
-              <p style={{fontSize:12, color:"var(--gray-400)", marginBottom:12}}>File: {preview.filename} ({(preview.size_bytes / 1024).toFixed(0)} KB)</p>
+              <Media src={API_BASE + preview.preview_url} alt="Preview" style={{width:"100%", borderRadius:8, marginBottom:12}} />
+              {preview.revised_prompt && <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:8}}><strong>Revised prompt:</strong> {preview.revised_prompt}</p>}
+              <p style={{fontSize:12, color:"var(--gray-400)", marginBottom:12}}>File: {preview.filename} ({(preview.size_bytes / 1024).toFixed(0)} KB){isVideo(preview.filename) && <VideoBadge />}</p>
               <button className="btn btn-green btn-sm" onClick={() => openUploadModal(preview)}>
                 <Icon name="upload" /> Upload to GitHub & Attach to Post
               </button>
@@ -1264,18 +1306,18 @@ function AIImagesPage({ showToast }) {
       {/* Gallery */}
       <div className="table-wrap" style={{padding:20}}>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
-          <h3 style={{fontSize:16, fontWeight:600}}>Image Gallery</h3>
+          <h3 style={{fontSize:16, fontWeight:600}}>Media Gallery</h3>
           <button className="btn btn-outline btn-sm" onClick={loadGallery}>Refresh</button>
         </div>
         {gallery.length === 0 ? (
-          <p style={{color:"var(--gray-400)", fontSize:14, textAlign:"center", padding:24}}>No images yet. Generate one with DALL-E or import an external image above.</p>
+          <p style={{color:"var(--gray-400)", fontSize:14, textAlign:"center", padding:24}}>No media yet. Generate an image with DALL-E or import a photo/video above.</p>
         ) : (
           <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:12}}>
             {gallery.map(img => (
               <div key={img.filename} style={{background:"var(--gray-50)", borderRadius:8, overflow:"hidden", border:"1px solid var(--gray-200)"}}>
-                <img src={API_BASE + img.preview_url} alt={img.filename} style={{width:"100%", height:140, objectFit:"cover"}} />
+                <Media src={API_BASE + img.preview_url} alt={img.filename} style={{width:"100%", height:140, objectFit:"cover", background:"#000"}} />
                 <div style={{padding:8}}>
-                  <p style={{fontSize:11, color:"var(--gray-500)", marginBottom:4}}>{new Date(img.created).toLocaleDateString()}</p>
+                  <p style={{fontSize:11, color:"var(--gray-500)", marginBottom:4}}>{new Date(img.created).toLocaleDateString()}{img.media_type === "video" && <VideoBadge />}</p>
                   <button className="btn btn-green btn-sm" style={{width:"100%", justifyContent:"center"}} onClick={() => openUploadModal(img)}>
                     <Icon name="upload" /> Use
                   </button>
@@ -1292,11 +1334,11 @@ function AIImagesPage({ showToast }) {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h3>Upload to GitHub Pages</h3>
             <div style={{textAlign:"center", marginBottom:16}}>
-              <img src={API_BASE + uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
+              <Media src={API_BASE + uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
             </div>
             <div className="form-group">
-              <label>Image Filename (on GitHub Pages)</label>
-              <input value={targetFilename} onChange={e => setTargetFilename(e.target.value)} placeholder="e.g., post4-new-vibes.png" />
+              <label>Filename (on GitHub Pages) — keep the {isVideo(uploadModal.filename) ? ".mp4/.mov" : "image"} extension</label>
+              <input value={targetFilename} onChange={e => setTargetFilename(e.target.value)} placeholder={isVideo(uploadModal.filename) ? "e.g., venue-tour.mp4" : "e.g., post4-new-vibes.png"} />
               <div className="form-hint">This will be saved at: {aiConfig.github_repo ? `https://ashmurthy64.github.io/One-love-bar/images/${targetFilename}` : "(configure GitHub repo in settings)"}</div>
             </div>
             <div className="form-group">
@@ -1499,7 +1541,7 @@ function App() {
   const pages = [
     { id: "dashboard", label: "Dashboard", icon: "home" },
     { id: "posts", label: "Campaign Posts", icon: "posts" },
-    { id: "ai", label: "AI Images", icon: "sparkle" },
+    { id: "ai", label: "Media", icon: "sparkle" },
     { id: "recipients", label: "WhatsApp Contacts", icon: "users" },
     { id: "settings", label: "Settings", icon: "settings" },
     { id: "logs", label: "Activity Log", icon: "logs" },
