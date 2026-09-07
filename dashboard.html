@@ -349,7 +349,7 @@ function DashboardPage({ showToast }) {
     setPosting(true);
     try {
       const r = await api("/post-now", { method: "POST", body: {} });
-      showToast(`Posted "${r.post_id}" — FB: ${r.facebook}${r.facebook_old ? `, FB old: ${r.facebook_old}` : ""}, IG: ${r.instagram}, WA: ${r.whatsapp}`, "success");
+      showToast(`Posted "${r.post_id}" — FB: ${r.facebook}${r.facebook_old ? `, FB old: ${r.facebook_old}` : ""}, IG: ${r.instagram}${r.instagram_old ? `, IG old: ${r.instagram_old}` : ""}, WA: ${r.whatsapp}`, "success");
       load();
     } catch (err) { showToast(err.message, "error"); }
     setPosting(false);
@@ -435,6 +435,7 @@ function DashboardPage({ showToast }) {
                   {log.facebook && <><span className={`badge ${log.facebook === "ok" ? "badge-green" : "badge-red"}`}>FB {log.facebook}</span>{" "}</>}
                   {log.facebook_old && <><span className={`badge ${log.facebook_old === "ok" ? "badge-green" : "badge-red"}`}>FB old {log.facebook_old}</span>{" "}</>}
                   {log.instagram && <><span className={`badge ${log.instagram === "ok" ? "badge-green" : "badge-red"}`}>IG {log.instagram}</span>{" "}</>}
+                  {log.instagram_old && <><span className={`badge ${log.instagram_old === "ok" ? "badge-green" : "badge-red"}`}>IG old {log.instagram_old}</span>{" "}</>}
                   {log.whatsapp && <span className="badge badge-gold">WA {log.whatsapp}</span>}
                   {log.by && <span style={{fontSize:12, color:"var(--gray-400)", marginLeft:8}}>by {log.by}</span>}
                 </td>
@@ -1421,6 +1422,7 @@ function LogsPage() {
                   {l.facebook && <><span className={`badge ${l.facebook === "ok" ? "badge-green" : "badge-red"}`}>FB {l.facebook}</span>{" "}</>}
                   {l.facebook_old && <><span className={`badge ${l.facebook_old === "ok" ? "badge-green" : "badge-red"}`}>FB old {l.facebook_old}</span>{" "}</>}
                   {l.instagram && <><span className={`badge ${l.instagram === "ok" ? "badge-green" : "badge-red"}`}>IG {l.instagram}</span>{" "}</>}
+                  {l.instagram_old && <><span className={`badge ${l.instagram_old === "ok" ? "badge-green" : "badge-red"}`}>IG old {l.instagram_old}</span>{" "}</>}
                   {l.whatsapp && <span className="badge badge-gold">WA {l.whatsapp}</span>}
                   {l.phone && <span style={{fontSize:12}}>Phone: {l.phone}</span>}
                   {l.fields && <span style={{fontSize:12}}>Changed: {l.fields.join(", ")}</span>}
