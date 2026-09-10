@@ -215,7 +215,7 @@ tr:hover td { background: var(--gray-50); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<script src="media-upload.js?v=1.5.0"></script>
+<script src="media-upload.js?v=1.5.2"></script>
 <script type="text/babel">
 const { useState, useEffect, useCallback, useRef } = React;
 
@@ -1113,7 +1113,7 @@ function AIImagesPage({ showToast }) {
     const allowed = ["image/png", "image/jpeg", "image/webp", "video/mp4", "video/quicktime", "video/x-m4v"];
     if (!allowed.includes(file.type) && !isVideo(file.name)) { showToast("Unsupported format. Use PNG, JPG, WebP, MP4 or MOV.", "error"); return; }
     const maxMb = isVid ? (aiConfig.max_video_mb || 60) : (aiConfig.max_image_mb || 20);
-    if (file.size > maxMb * 1024 * 1024) { showToast(`File too large (max ${maxMb} MiB). Choose a smaller file.`, "error"); return; }
+    if (file.size > maxMb * 1024 * 1024) { showToast(`File too large (max ${maxMb} MiB). ${isVid ? "Compress the video or export at a lower bitrate/resolution, then upload again." : "Choose a smaller image."}`, "error"); return; }
     setImporting(true);
     setUploadProgress(0);
     try {
@@ -1261,6 +1261,7 @@ function AIImagesPage({ showToast }) {
               Upload the original video directly—no ZIP or re-encoding needed.
             </p>
             <p style={{fontSize:14, marginBottom:12}}><strong>Maximum video size: {aiConfig.max_video_mb || 60} MiB</strong> (about {Math.round((aiConfig.max_video_mb || 60) * 1.048576)} MB). MP4, MOV or M4V.<br /><strong>Maximum image size: {aiConfig.max_image_mb || 20} MiB</strong> (about {Math.round((aiConfig.max_image_mb || 20) * 1.048576)} MB). PNG, JPG or WebP.</p>
+            <p className="form-hint" style={{marginBottom:12}}>Too large? Compress the video or export at a lower bitrate/resolution, then upload again. ZIP archives are not supported.</p>
             <input type="file" ref={fileInputRef} accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,.mp4,.mov,.m4v" style={{display:"none"}}
               onChange={importImage} />
             <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={importing}
