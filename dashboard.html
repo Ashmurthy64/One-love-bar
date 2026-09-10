@@ -215,6 +215,7 @@ tr:hover td { background: var(--gray-50); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="media-upload.js?v=1.5.0"></script>
 <script type="text/babel">
 const { useState, useEffect, useCallback, useRef } = React;
 
@@ -583,7 +584,7 @@ function PostsPage({ showToast }) {
             )}
             {form.image_file && !autoGenImage && (
               <div style={{marginBottom:16}}>
-                <Media src={MEDIA_BASE + form.image_file} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
+                <Media src={/^https?:\/\//.test(form.image_file) ? form.image_file : MEDIA_BASE + form.image_file} style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} onError={e => e.target.style.display="none"} />
               </div>
             )}
             {aiProgress && <p style={{fontSize:13, color:"var(--gold)", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:8}}><span style={{width:16, height:16, display:"inline-flex", flexShrink:0}}><Icon name="sparkle" /></span> {aiProgress}</p>}
@@ -1070,6 +1071,7 @@ function AIImagesPage({ showToast }) {
   const [newPostForm, setNewPostForm] = useState({ id: "", caption: "", fb_caption: "" });
   const [style, setStyle] = useState("tropical beach bar photography, warm golden hour lighting");
   const [importing, setImporting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [mediaUrl, setMediaUrl] = useState("");
   const [importingUrl, setImportingUrl] = useState(false);
   const fileInputRef = useRef(null);
@@ -1111,18 +1113,14 @@ function AIImagesPage({ showToast }) {
     const allowed = ["image/png", "image/jpeg", "image/webp", "video/mp4", "video/quicktime", "video/x-m4v"];
     if (!allowed.includes(file.type) && !isVideo(file.name)) { showToast("Unsupported format. Use PNG, JPG, WebP, MP4 or MOV.", "error"); return; }
     const maxMb = isVid ? (aiConfig.max_video_mb || 60) : (aiConfig.max_image_mb || 20);
-    if (file.size > maxMb * 1024 * 1024) { showToast(`File too large (max ${maxMb} MB)`, "error"); return; }
+    if (file.size > maxMb * 1024 * 1024) { showToast(`File too large (max ${maxMb} MiB). Choose a smaller file.`, "error"); return; }
     setImporting(true);
+    setUploadProgress(0);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
       const token = localStorage.getItem("oneloveToken");
-      const res = await fetch(`${API_BASE}/api/ai/import-image`, {
-        method: "POST", body: formData,
-        headers: { "Authorization": `Bearer ${token}` },
+      const data = await uploadDashboardMedia({
+        url: `${API_BASE}/api/ai/import-media`, file, token, maxMiB: maxMb, onProgress: setUploadProgress,
       });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
       setPreview(data);
       loadGallery();
       showToast(`${data.media_type === "video" ? "Video" : "Image"} imported: ${data.filename}`);
@@ -1163,8 +1161,7 @@ function AIImagesPage({ showToast }) {
     }
     setUploading(true);
     try {
-      // Upload to GitHub Pages
-      const res = await api("/ai/upload-to-github", { method: "POST", body: {
+      const res = await api("/ai/publish-media", { method: "POST", body: {
         filename: uploadModal.filename, target_filename: targetFilename,
       }});
       if (res.error) throw new Error(res.error);
@@ -1184,7 +1181,7 @@ function AIImagesPage({ showToast }) {
         await api(`/posts/${attachPostId}`, { method: "PUT", body: { image_file: savedName } });
         showToast(`Uploaded & attached ${kind} to post "${attachPostId}"!`);
       } else {
-        showToast(`Uploaded to GitHub Pages: ${savedName}`);
+        showToast(`${kind === "video" ? "Video" : "Image"} ready to use: ${res.display_name || savedName}`);
       }
       setUploadModal(null);
       loadPosts();
@@ -1261,17 +1258,20 @@ function AIImagesPage({ showToast }) {
               <Icon name="upload" /> Import Image or Video
             </h3>
             <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:12}}>
-              Upload a photo or video from your phone, Midjourney, Canva, or anywhere else. Images up to {aiConfig.max_image_mb || 20} MB, videos (MP4/MOV) up to {aiConfig.max_video_mb || 60} MB.
+              Upload the original video directly—no ZIP or re-encoding needed.
             </p>
+            <p style={{fontSize:14, marginBottom:12}}><strong>Maximum video size: {aiConfig.max_video_mb || 60} MiB</strong> (about {Math.round((aiConfig.max_video_mb || 60) * 1.048576)} MB). MP4, MOV or M4V.<br /><strong>Maximum image size: {aiConfig.max_image_mb || 20} MiB</strong> (about {Math.round((aiConfig.max_image_mb || 20) * 1.048576)} MB). PNG, JPG or WebP.</p>
             <input type="file" ref={fileInputRef} accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,.mp4,.mov,.m4v" style={{display:"none"}}
               onChange={importImage} />
             <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={importing}
               style={{width:"100%", justifyContent:"center"}}>
-              <Icon name="upload" /> {importing ? "Importing..." : "Choose Image or Video File"}
+              <Icon name="upload" /> {importing ? (uploadProgress < 100 ? `Uploading ${uploadProgress}%` : "Saving video or image...") : "Choose Image or Video File"}
             </button>
 
+            {importing && <progress aria-label="Media upload progress" value={uploadProgress} max="100" style={{width:"100%", marginTop:8}} />}
+
             <p style={{fontSize:12, color:"var(--gray-500)", margin:"16px 0 8px"}}>
-              Or paste a link — a direct image/video URL, or a <strong>Google Drive share link</strong> (file must be set to "Anyone with the link"). Team drop-box: the <em>One Love / Social Media Videos</em> Drive folder.
+              Or paste a link — a direct image/video URL, or a <strong>Google Drive share link</strong> (file must be set to "Anyone with the link"). The same limits apply: videos {aiConfig.max_video_mb || 60} MiB, images {aiConfig.max_image_mb || 20} MiB. Team drop-box: the <em>One Love / Social Media Videos</em> Drive folder.
             </p>
             <div style={{display:"flex", gap:8}}>
               <input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} placeholder="https://drive.google.com/file/d/…/view"
@@ -1294,7 +1294,7 @@ function AIImagesPage({ showToast }) {
               {preview.revised_prompt && <p style={{fontSize:12, color:"var(--gray-500)", marginBottom:8}}><strong>Revised prompt:</strong> {preview.revised_prompt}</p>}
               <p style={{fontSize:12, color:"var(--gray-400)", marginBottom:12}}>File: {preview.filename} ({(preview.size_bytes / 1024).toFixed(0)} KB){isVideo(preview.filename) && <VideoBadge />}</p>
               <button className="btn btn-green btn-sm" onClick={() => openUploadModal(preview)}>
-                <Icon name="upload" /> Upload to GitHub & Attach to Post
+                <Icon name="upload" /> Save Media & Attach to Post
               </button>
             </div>
           ) : (
@@ -1334,17 +1334,17 @@ function AIImagesPage({ showToast }) {
       {uploadModal && (
         <div className="modal-overlay" onClick={() => setUploadModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>Upload to GitHub Pages</h3>
+            <h3>Save Media for Posts</h3>
             <div style={{textAlign:"center", marginBottom:16}}>
               <Media src={API_BASE + uploadModal.preview_url} alt="Preview" style={{maxWidth:"100%", maxHeight:200, borderRadius:8}} />
             </div>
             <div className="form-group">
-              <label>Filename (on GitHub Pages) — keep the {isVideo(uploadModal.filename) ? ".mp4/.mov" : "image"} extension</label>
+              <label>Media name — keep the {isVideo(uploadModal.filename) ? ".mp4/.mov" : "image"} extension</label>
               <input value={targetFilename} onChange={e => setTargetFilename(e.target.value)} placeholder={isVideo(uploadModal.filename) ? "e.g., venue-tour.mp4" : "e.g., post4-new-vibes.png"} />
-              <div className="form-hint">This will be saved at: {aiConfig.github_repo ? `https://ashmurthy64.github.io/One-love-bar/images/${targetFilename}` : "(configure GitHub repo in settings)"}</div>
+              <div className="form-hint">{isVideo(uploadModal.filename) ? "Your original video stays at full quality and is ready to attach immediately." : "Save this image so it can be used in your posts."}</div>
             </div>
             <div className="form-group">
-              <label>What do you want to do with this image?</label>
+              <label>What do you want to do with this media?</label>
               <div style={{display:"flex", gap:8, marginBottom:12}}>
                 <button className={`btn btn-sm ${!createNewPost && !attachPostId ? "btn-green" : "btn-outline"}`}
                   onClick={() => { setCreateNewPost(false); setAttachPostId(""); }}>
@@ -1365,7 +1365,7 @@ function AIImagesPage({ showToast }) {
                   <select value={attachPostId} onChange={e => setAttachPostId(e.target.value)}>
                     {posts.map(p => <option key={p.id} value={p.id}>{p.id}</option>)}
                   </select>
-                  <div className="form-hint">This image will replace the current image for that post.</div>
+                  <div className="form-hint">This media will replace the current image or video for that post.</div>
                 </div>
               )}
 
