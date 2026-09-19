@@ -462,8 +462,6 @@ function PostsPage({ showToast }) {
 
   const load = async () => { try { setPosts(await api("/posts")); } catch(e){} };
   useEffect(() => { load(); }, []);
-  const [includeOld, setIncludeOld] = useState(() => { try { return localStorage.getItem("ol_include_old") === "1"; } catch(e) { return false; } });
-  const toggleOld = (v) => { setIncludeOld(v); try { localStorage.setItem("ol_include_old", v ? "1" : "0"); } catch(e) {} };
 
   const openNew = () => { setForm({ id: "", caption: "", fb_caption: "", image_file: "" }); setAutoGenImage(false); setAiProgress(""); setModal("new"); };
   const openEdit = (p) => { setForm({ ...p }); setAutoGenImage(false); setAiProgress(""); setModal("edit"); };
@@ -504,12 +502,10 @@ function PostsPage({ showToast }) {
     } catch (err) { showToast(err.message, "error"); }
   };
 
-  const LABELS = { facebook: "Facebook", facebook_old: "Facebook (old page)", instagram: "Instagram post", instagram_old: "Instagram post (old account)",
-                   instagram_story: "Instagram story", instagram_old_story: "Instagram story (old account)", whatsapp: "WhatsApp" };
-  const OLD_OF = { facebook: "facebook_old", instagram: "instagram_old", instagram_story: "instagram_old_story" };
+  const LABELS = { facebook: "Facebook", instagram: "Instagram post", instagram_story: "Instagram story", whatsapp: "WhatsApp" };
   const publishTo = async (id, platform) => {
-    const targets = includeOld && OLD_OF[platform] ? [platform, OLD_OF[platform]] : [platform];
-    if (!confirm(`Publish "${id}" to ${targets.map(t => LABELS[t]).join(" and ")} now?`)) return;
+    const targets = [platform];
+    if (!confirm(`Publish "${id}" to ${LABELS[platform]} now?`)) return;
     for (const t of targets) {
       try {
         const r = await api("/post-single", { method: "POST", body: { post_id: id, platform: t } });
@@ -533,12 +529,7 @@ function PostsPage({ showToast }) {
     <>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24}}>
         <h1 className="page-title" style={{margin:0}}>Campaign Posts</h1>
-        <div style={{display:"flex", alignItems:"center", gap:16}}>
-          <label style={{display:"flex", alignItems:"center", gap:6, fontSize:13, cursor:"pointer"}} title="When on, the FB / IG buttons also publish to the old Facebook Page and old Instagram account">
-            <input type="checkbox" checked={includeOld} onChange={e => toggleOld(e.target.checked)} /> Also post to old FB/IG accounts
-          </label>
-          <button className="btn btn-green" onClick={openNew}><Icon name="plus" /> New Post</button>
-        </div>
+        <button className="btn btn-green" onClick={openNew}><Icon name="plus" /> New Post</button>
       </div>
       <p className="form-hint" style={{marginTop:-12, marginBottom:20}}>
         Each button publishes that one post immediately. <b>IG Story</b> puts the post's media up as a story frame for 24 hours and joins whatever story is already live; use vertical 9:16 media, video up to 60 s, and note that stories carry no caption.
