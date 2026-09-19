@@ -462,6 +462,8 @@ function PostsPage({ showToast }) {
 
   const load = async () => { try { setPosts(await api("/posts")); } catch(e){} };
   useEffect(() => { load(); }, []);
+  const [includeOld, setIncludeOld] = useState(() => { try { return localStorage.getItem("ol_include_old") === "1"; } catch(e) { return false; } });
+  const toggleOld = (v) => { setIncludeOld(v); try { localStorage.setItem("ol_include_old", v ? "1" : "0"); } catch(e) {} };
 
   const openNew = () => { setForm({ id: "", caption: "", fb_caption: "", image_file: "" }); setAutoGenImage(false); setAiProgress(""); setModal("new"); };
   const openEdit = (p) => { setForm({ ...p }); setAutoGenImage(false); setAiProgress(""); setModal("edit"); };
@@ -502,11 +504,19 @@ function PostsPage({ showToast }) {
     } catch (err) { showToast(err.message, "error"); }
   };
 
-  const testPost = async (id, platform) => {
-    try {
-      const r = await api("/post-single", { method: "POST", body: { post_id: id, platform } });
-      showToast(`${platform}: ${r.success ? "Sent!" : "Failed"}`, r.success ? "success" : "error");
-    } catch (err) { showToast(err.message, "error"); }
+  const LABELS = { facebook: "Facebook", facebook_old: "Facebook (old page)", instagram: "Instagram post", instagram_old: "Instagram post (old account)",
+                   instagram_story: "Instagram story", instagram_old_story: "Instagram story (old account)", whatsapp: "WhatsApp" };
+  const OLD_OF = { facebook: "facebook_old", instagram: "instagram_old", instagram_story: "instagram_old_story" };
+  const publishTo = async (id, platform) => {
+    const targets = includeOld && OLD_OF[platform] ? [platform, OLD_OF[platform]] : [platform];
+    if (!confirm(`Publish "${id}" to ${targets.map(t => LABELS[t]).join(" and ")} now?`)) return;
+    for (const t of targets) {
+      try {
+        const r = await api("/post-single", { method: "POST", body: { post_id: id, platform: t } });
+        const why = r.success ? "" : ` — ${r.detail?.error?.message || r.detail || "failed"}`;
+        showToast(`${LABELS[t]}: ${r.success ? "Sent!" : "Failed"}${why}`, r.success ? "success" : "error");
+      } catch (err) { showToast(`${LABELS[t]}: ${err.message}`, "error"); }
+    }
   };
 
   const ratePost = async (id, rating) => {
@@ -523,8 +533,16 @@ function PostsPage({ showToast }) {
     <>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24}}>
         <h1 className="page-title" style={{margin:0}}>Campaign Posts</h1>
-        <button className="btn btn-green" onClick={openNew}><Icon name="plus" /> New Post</button>
+        <div style={{display:"flex", alignItems:"center", gap:16}}>
+          <label style={{display:"flex", alignItems:"center", gap:6, fontSize:13, cursor:"pointer"}} title="When on, the FB / IG buttons also publish to the old Facebook Page and old Instagram account">
+            <input type="checkbox" checked={includeOld} onChange={e => toggleOld(e.target.checked)} /> Also post to old FB/IG accounts
+          </label>
+          <button className="btn btn-green" onClick={openNew}><Icon name="plus" /> New Post</button>
+        </div>
       </div>
+      <p className="form-hint" style={{marginTop:-12, marginBottom:20}}>
+        Each button publishes that one post immediately. <b>IG Story</b> puts the post's media up as a story frame for 24 hours and joins whatever story is already live; use vertical 9:16 media, video up to 60 s, and note that stories carry no caption.
+      </p>
 
       {posts.map(p => (
         <div className="post-card" key={p.id}>
@@ -534,9 +552,10 @@ function PostsPage({ showToast }) {
             <p>{p.caption}</p>
             <div className="post-card-actions">
               <button className="btn btn-outline btn-sm" onClick={() => openEdit(p)}><Icon name="edit" /> Edit</button>
-              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "facebook")}>Test FB</button>
-              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "instagram")}>Test IG</button>
-              <button className="btn btn-outline btn-sm" onClick={() => testPost(p.id, "whatsapp")}>Test WA</button>
+              <button className="btn btn-outline btn-sm" onClick={() => publishTo(p.id, "facebook")} title="Publish to Facebook now">FB</button>
+              <button className="btn btn-outline btn-sm" onClick={() => publishTo(p.id, "instagram")} title="Publish to the Instagram feed now (video becomes a Reel)">IG Post</button>
+              <button className="btn btn-outline btn-sm" onClick={() => publishTo(p.id, "instagram_story")} title="Publish this post's media as an Instagram story (24 h, no caption)">IG Story</button>
+              <button className="btn btn-outline btn-sm" onClick={() => publishTo(p.id, "whatsapp")} title="Send the WhatsApp announcement now">WA</button>
               <span style={{borderLeft:"1px solid var(--gray-200)", height:24, margin:"0 4px"}}></span>
               <button className={`btn btn-sm ${p.rating === "up" ? "btn-green" : "btn-outline"}`} onClick={() => ratePost(p.id, "up")} title="AI will create more like this" style={{padding:"4px 8px", fontSize:16}}>👍</button>
               <button className={`btn btn-sm ${p.rating === "down" ? "btn-red" : "btn-outline"}`} onClick={() => ratePost(p.id, "down")} title="AI will avoid this style" style={{padding:"4px 8px", fontSize:16}}>👎</button>
@@ -579,7 +598,7 @@ function PostsPage({ showToast }) {
               <div className="form-group">
                 <label>Image or Video Filename</label>
                 <input value={form.image_file} onChange={e => setForm({...form, image_file: e.target.value})} placeholder="e.g. grand-opening.jpg or venue-tour.mp4" />
-                <p className="form-hint">Upload via the Media tab (file, URL, or Google Drive link) or directly to github.com/ashmurthy64/One-love-bar/images/. Videos post to Facebook as a video and to Instagram as a Reel.</p>
+                <p className="form-hint">Upload via the Media tab (file, URL, or Google Drive link) or directly to github.com/ashmurthy64/One-love-bar/images/. Videos post to Facebook as a video and to Instagram as a Reel. For IG Story, vertical 9:16 media looks best.</p>
               </div>
             )}
             {form.image_file && !autoGenImage && (
