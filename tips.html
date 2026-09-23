@@ -209,7 +209,7 @@
 
   <section class="step" aria-labelledby="h-staff">
     <h2 id="h-staff"><span class="n">2</span>Who worked this period</h2>
-    <p class="hint"><b>In the pool:</b> Rose, the Chef/Kitchen Manager, Sous Chef, Prep Cook, Wait Staff, the Bar Manager, and Bartenders. <b>Not eligible:</b> the owner management team (Ash, Claude, Vincent/Cristina, Kari), the Cleaner, and Security. Hours can be typed in quarter-hour steps.</p>
+    <p class="hint"><b>In the pool:</b> Rose, the Chef/Kitchen Manager, Sous Chef, Prep Cook, Wait Staff, the Bar Manager, Bartenders, and the Cleaner. <b>Not eligible:</b> the owner management team (Ash, Claude, Vincent/Cristina, Kari) and Security. Hours can be typed in quarter-hour steps.</p>
     <div class="tablewrap">
       <table>
         <thead>
@@ -226,6 +226,7 @@
       <option value="Wait Staff"></option>
       <option value="Bar Manager"></option>
       <option value="Bartender"></option>
+      <option value="Cleaner"></option>
     </datalist>
     <button class="btn addrow" type="button" id="addRowBtn">+ Add staff member</button>
   </section>
@@ -277,7 +278,8 @@
     { name: '', role: 'Prep Cook', hours: 40 },
     { name: '', role: 'Bar Manager', hours: 40 },
     { name: '', role: 'Bartender', hours: 40 },
-    { name: '', role: 'Wait Staff', hours: 40 }
+    { name: '', role: 'Wait Staff', hours: 40 },
+    { name: '', role: 'Cleaner', hours: 40 }
   ];
   var $ = function (id) { return document.getElementById(id); };
   var staffBody = $('staffBody'), resultsBody = $('resultsBody');
