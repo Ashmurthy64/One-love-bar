@@ -240,6 +240,13 @@ const api = async (path, options = {}) => {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const data = await res.json();
+  if (res.status === 401 && token && path !== "/login") {
+    // Session expired mid-use: drop the stale token and return to the login screen with a clear message.
+    localStorage.removeItem('oneloveToken');
+    try { sessionStorage.setItem('oneloveNotice', 'Your session expired. Please log in again.'); } catch (e) {}
+    window.location.reload();
+    throw new Error("Your session expired. Please log in again.");
+  }
   if (!res.ok) throw new Error(data.error || "Request failed");
   return data;
 };
@@ -1515,7 +1522,11 @@ function App() {
     if (storedToken) {
       // Verify token with /me endpoint
       api("/me")
-        .then(d => { setUser(d); setChecking(false); })
+        .then(d => {
+          // /me answers 200 with logged_in:false for an expired or bad token — do not treat that as a user.
+          if (d && d.logged_in) { setUser(d); } else { localStorage.removeItem('oneloveToken'); setUser(null); }
+          setChecking(false);
+        })
         .catch(() => {
           localStorage.removeItem('oneloveToken');
           setChecking(false);
