@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu 🌴 One Love Bar — Las Terrenas</title>
+<meta name="description" content="Food and drinks menu — One Love Bar &amp; Restaurant, Playa Ballenas, Las Terrenas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Karla:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+  :root{
+    --sand:#F6EEDC; --paper:#FFFDF8; --ink:#0F2A31; --ink-soft:#4C6169;
+    --line:#E4D9C2; --teal:#1F9BB8; --teal-deep:#0E5F73; --rope:#B87333;
+    --rope-soft:#E7C79B; --gold:#F0B54A;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --sand:#0F2A31; --paper:#12333B; --ink:#EAF4F6; --ink-soft:#A9C3CA;
+      --line:#2A5561; --teal:#4CC3DE; --teal-deep:#0B4654; --rope:#D39A5A; --rope-soft:#6B4A2A; --gold:#F6C56A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --sand:#0F2A31; --paper:#12333B; --ink:#EAF4F6; --ink-soft:#A9C3CA;
+    --line:#2A5561; --teal:#4CC3DE; --teal-deep:#0B4654; --rope:#D39A5A; --rope-soft:#6B4A2A; --gold:#F6C56A;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--sand); color:var(--ink);
+    font-family:"Karla","Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5;
+    padding-inline:16px; padding-block:24px 60px;
+  }
+  .wrap{max-width:960px; margin:0 auto}
+  nav.top{display:flex; justify-content:center; gap:22px; margin-bottom:22px; flex-wrap:wrap}
+  nav.top a{color:var(--ink-soft); text-decoration:none; font-weight:700; font-size:13px; letter-spacing:.08em; text-transform:uppercase}
+  nav.top a.active, nav.top a:hover{color:var(--teal-deep)}
+  header.brand{text-align:center; margin-bottom:28px}
+  header.brand img.logo{height:96px; width:auto; margin:0 auto 10px}
+  header.brand h1{
+    font-family:"Fredoka","Karla",sans-serif; font-weight:700; font-size:clamp(30px,5vw,44px);
+    line-height:1.05; margin:0 0 6px; color:var(--teal-deep); letter-spacing:.01em;
+  }
+  header.brand p{margin:0; color:var(--ink-soft)}
+
+  .tabs{display:flex; justify-content:center; gap:10px; margin:0 0 24px; flex-wrap:wrap}
+  .tabs button{
+    font-family:"Fredoka",sans-serif; font-weight:600; font-size:14px; letter-spacing:.04em;
+    padding:10px 22px; border-radius:999px; border:2px solid var(--rope-soft); background:var(--paper);
+    color:var(--teal-deep); cursor:pointer;
+  }
+  .tabs button.active{background:var(--teal); border-color:var(--teal); color:#fff}
+
+  section.panel{display:none}
+  section.panel.active{display:block}
+
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:22px 24px; margin-bottom:20px; box-shadow:0 6px 20px rgba(15,42,49,.06);
+  }
+  .card h2{
+    font-family:"Fredoka",sans-serif; font-weight:600; font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--rope); margin:0 0 14px; border-bottom:2px solid var(--rope-soft); padding-bottom:8px;
+  }
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:0 40px}
+  @media (max-width:700px){ .grid-2{grid-template-columns:1fr} }
+
+  .item{display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:9px 0; border-bottom:1px dashed var(--line)}
+  .item:last-child{border-bottom:none}
+  .item .name{font-weight:700; color:var(--ink)}
+  .item .desc{display:block; font-weight:400; font-size:13px; color:var(--ink-soft); margin-top:1px}
+  .item .price{font-family:"Fredoka",sans-serif; font-weight:600; color:var(--teal-deep); white-space:nowrap}
+
+  .note{
+    text-align:center; font-size:13px; color:var(--ink-soft); margin-top:10px;
+    background:var(--rope-soft); color:var(--rope); border-radius:10px; padding:10px 14px; font-weight:700;
+  }
+  .flavor-note{font-size:12px; color:var(--ink-soft); margin:6px 0 14px}
+
+  footer{text-align:center; color:var(--ink-soft); font-size:13px; margin-top:30px}
+  footer a{color:var(--teal-deep)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="top">
+    <a href="index.html">Home</a>
+    <a href="menu.html" class="active">Menu</a>
+    <a href="visit.html">Hours &amp; Visit</a>
+  </nav>
+
+  <header class="brand">
+    <img class="logo" src="assets/logo.png" alt="One Love Bar logo">
+    <h1>Menu</h1>
+    <p>Playa Ballenas · Las Terrenas · Samaná · Dominican Republic</p>
+  </header>
+
+  <div class="tabs">
+    <button data-panel="food" class="active">Food · Comida</button>
+    <button data-panel="drinks">Drinks · Bebidas</button>
+  </div>
+
+  <section id="food" class="panel active">
+    <div class="card">
+      <h2>Starters &amp; Mains</h2>
+      <div class="item">
+        <div><span class="name">Chicken Wings</span><span class="desc">Marinated and fried to perfection. Choose Jamaican jerk, barbeque, buffalo, or sweet chili.</span></div>
+        <div class="price">RD$500</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Calamari</span><span class="desc">Lightly breaded and fried. Served with garlic aioli or marinara.</span></div>
+        <div class="price">RD$500</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Fish Sticks</span><span class="desc">Crispy fish sticks served with garlic aioli and french fries.</span></div>
+        <div class="price">RD$650</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Hummus and Pita</span><span class="desc">Housemade hummus served with warm pita bread.</span></div>
+        <div class="price">RD$400</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Hamburger</span><span class="desc">5oz burger with tomato, onion and lettuce. Served with french fries.</span></div>
+        <div class="price">RD$500</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Cheeseburger</span><span class="desc">5oz burger with cheese, tomato, onion and lettuce. Served with french fries.</span></div>
+        <div class="price">RD$550</div>
+      </div>
+      <div class="item">
+        <div><span class="name">Bacon Cheeseburger</span><span class="desc">5oz burger with cheese, bacon, tomato, onion and lettuce. Served with french fries.</span></div>
+        <div class="price">RD$650</div>
+      </div>
+    </div>
+    <div class="note">18% tax and 10% service are not included in prices</div>
+  </section>
+
+  <section id="drinks" class="panel">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Signature Cocktails</h2>
+        <div class="item"><div><span class="name">Painkiller</span><span class="desc">Rum, fruit juices and coconut, garnished with nutmeg</span></div><div class="price">RD$375</div></div>
+        <div class="item"><div><span class="name">Coco Loco</span><span class="desc">Coconut rum, coconut water and coconut cream</span></div><div class="price">RD$400</div></div>
+        <div class="item"><div><span class="name">Hurricane</span><span class="desc">Light rum, dark rum, lime, orange, passionfruit, grenadine</span></div><div class="price">RD$400</div></div>
+        <div class="item"><div><span class="name">Mai Tai</span><span class="desc">Rum, lime, Grand Marnier, simple syrup</span></div><div class="price">RD$400</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Tequila Cocktails</h2>
+        <div class="item"><div><span class="name">Tequila Sunrise</span><span class="desc">Tequila with orange juice and cranberry juice</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Classic Margarita**</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Matador</span><span class="desc">Tequila with pineapple juice and lime</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Paloma</span><span class="desc">Tequila, grapefruit, lime and simple syrup</span></div><div class="price">RD$350</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Vodka Cocktails</h2>
+        <div class="item"><div><span class="name">Ballena Breeze</span><span class="desc">Vodka, cranberry and pineapple juice</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Cosmopolitan</span><span class="desc">Vodka, triple sec, lime and cranberry</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Sex on the Beach</span><span class="desc">Rum, lime, Grand Marnier, simple syrup</span></div><div class="price">RD$350</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Rum &amp; Gin Cocktails</h2>
+        <div class="item"><div><span class="name">Cuba Libre</span></div><div class="price">RD$250</div></div>
+        <div class="item"><div><span class="name">Santo Libre</span></div><div class="price">RD$250</div></div>
+        <div class="item"><div><span class="name">Blue Hawaiian</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Piña Colada</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Mojito**</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Gin Tonic</span></div><div class="price">RD$300</div></div>
+        <div class="item"><div><span class="name">Negroni</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Gimlet</span></div><div class="price">RD$350</div></div>
+        <div class="item"><div><span class="name">Tom Collins</span></div><div class="price">RD$350</div></div>
+        <div class="flavor-note">** Add a flavor +RD$50: jalapeño, passionfruit, mango, coconut, pineapple</div>
+      </div>
+
+      <div class="card">
+        <h2>Chupitos</h2>
+        <div class="item"><div><span class="name">Green Tea</span><span class="desc">Jameson, peach schnapps, sour mix</span></div><div class="price">RD$300</div></div>
+        <div class="item"><div><span class="name">White Tea</span><span class="desc">Vodka, peach schnapps, sour mix</span></div><div class="price">RD$200</div></div>
+        <div class="item"><div><span class="name">Limoncello</span></div><div class="price">RD$150</div></div>
+        <div class="item"><div><span class="name">Lemon Drop</span><span class="desc">Vodka and lemon juice</span></div><div class="price">RD$200</div></div>
+        <div class="item"><div><span class="name">Orchard Breeze</span><span class="desc">Vodka, peach schnapps, apple liquor, soda</span></div><div class="price">RD$200</div></div>
+        <div class="item"><div><span class="name">Pineapple Upside Down</span><span class="desc">Pineapple juice, vodka, grenadine</span></div><div class="price">RD$200</div></div>
+        <div class="item"><div><span class="name">Blue Kamikaze</span><span class="desc">Vodka, blue curaçao, lemon juice</span></div><div class="price">RD$200</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Wine, Beer &amp; More</h2>
+        <div class="item"><div><span class="name">House White / Red</span></div><div class="price">RD$300</div></div>
+        <div class="item"><div><span class="name">Presidente (Normal/Light)</span></div><div class="price">RD$200</div></div>
+        <div class="item"><div><span class="name">Bohemia</span></div><div class="price">RD$220</div></div>
+        <div class="item"><div><span class="name">The One</span></div><div class="price">RD$180</div></div>
+        <div class="item"><div><span class="name">Modelo Especial</span></div><div class="price">RD$275</div></div>
+        <div class="item"><div><span class="name">Corona</span></div><div class="price">RD$275</div></div>
+        <div class="item"><div><span class="name">IPA</span></div><div class="price">RD$300</div></div>
+        <div class="item"><div><span class="name">Coca-Cola / Sprite / Water / Soda Water / Tonic</span></div><div class="price">RD$100</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Juices · Jugos</h2>
+        <p class="flavor-note">Subject to availability / Sujeto a disponibilidad</p>
+        <div class="item"><div><span class="name">Orange</span></div><div class="price">RD$100</div></div>
+        <div class="item"><div><span class="name">Watermelon</span></div><div class="price">RD$150</div></div>
+        <div class="item"><div><span class="name">Mango</span></div><div class="price">RD$150</div></div>
+        <div class="item"><div><span class="name">Pineapple</span></div><div class="price">RD$175</div></div>
+        <div class="item"><div><span class="name">Cranberry</span></div><div class="price">RD$175</div></div>
+        <div class="item"><div><span class="name">Passionfruit</span></div><div class="price">RD$180</div></div>
+        <div class="item"><div><span class="name">Grapefruit</span></div><div class="price">RD$225</div></div>
+      </div>
+    </div>
+    <div class="note">18% tax and 10% service are not included in prices</div>
+  </section>
+</div>
+
+<footer>
+  One Love Bar &amp; Restaurant · Playa Ballenas, Las Terrenas, Samaná, Dominican Republic<br>
+  <a href="mailto:isarmiento@onelovebeachbar.com">isarmiento@onelovebeachbar.com</a> · <a href="tel:+18098381983">+1 (809) 838-1983</a>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tabs button');
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.panel).classList.add('active');
+  }));
+</script>
+
+</body>
+</html>

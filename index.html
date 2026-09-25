@@ -56,9 +56,25 @@
   }
   footer a { color: var(--text-dim); text-decoration: underline; }
   footer .contact-line { margin-top: 8px; }
+
+  nav.top {
+    display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
+    padding: 18px 20px 0;
+  }
+  nav.top a {
+    color: var(--text-dim); text-decoration: none; font-weight: 700;
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  nav.top a.active, nav.top a:hover { color: var(--text); }
 </style>
 </head>
 <body>
+
+<nav class="top">
+  <a href="index.html" class="active">Home</a>
+  <a href="menu.html">Menu</a>
+  <a href="visit.html">Hours &amp; Visit</a>
+</nav>
 
 <header>
   <img class="logo" src="assets/logo.png" alt="One Love Bar logo">

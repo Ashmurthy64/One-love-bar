@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hours &amp; Visit 🌴 One Love Bar — Las Terrenas</title>
+<meta name="description" content="Hours, location and event bookings — One Love Bar &amp; Restaurant, Playa Ballenas, Las Terrenas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Karla:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+  :root{
+    --sand:#F6EEDC; --paper:#FFFDF8; --ink:#0F2A31; --ink-soft:#4C6169;
+    --line:#E4D9C2; --teal:#1F9BB8; --teal-deep:#0E5F73; --rope:#B87333;
+    --rope-soft:#E7C79B; --gold:#F0B54A; --good:#2E8B57;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --sand:#0F2A31; --paper:#12333B; --ink:#EAF4F6; --ink-soft:#A9C3CA;
+      --line:#2A5561; --teal:#4CC3DE; --teal-deep:#0B4654; --rope:#D39A5A; --rope-soft:#6B4A2A; --gold:#F6C56A; --good:#6FCF97;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --sand:#0F2A31; --paper:#12333B; --ink:#EAF4F6; --ink-soft:#A9C3CA;
+    --line:#2A5561; --teal:#4CC3DE; --teal-deep:#0B4654; --rope:#D39A5A; --rope-soft:#6B4A2A; --gold:#F6C56A; --good:#6FCF97;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--sand); color:var(--ink);
+    font-family:"Karla","Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5;
+    padding-inline:16px; padding-block:24px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto}
+  nav.top{display:flex; justify-content:center; gap:22px; margin-bottom:22px; flex-wrap:wrap}
+  nav.top a{color:var(--ink-soft); text-decoration:none; font-weight:700; font-size:13px; letter-spacing:.08em; text-transform:uppercase}
+  nav.top a.active, nav.top a:hover{color:var(--teal-deep)}
+  header.brand{text-align:center; margin-bottom:28px}
+  header.brand img.logo{height:96px; width:auto; margin:0 auto 10px}
+  header.brand h1{
+    font-family:"Fredoka","Karla",sans-serif; font-weight:700; font-size:clamp(30px,5vw,44px);
+    line-height:1.05; margin:0 0 6px; color:var(--teal-deep); letter-spacing:.01em;
+  }
+  header.brand p{margin:0; color:var(--ink-soft)}
+
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:22px 24px; margin-bottom:20px; box-shadow:0 6px 20px rgba(15,42,49,.06);
+  }
+  .card h2{
+    font-family:"Fredoka",sans-serif; font-weight:600; font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--rope); margin:0 0 14px; border-bottom:2px solid var(--rope-soft); padding-bottom:8px;
+  }
+
+  table.hours{width:100%; border-collapse:collapse}
+  table.hours td{padding:7px 4px; border-bottom:1px dashed var(--line)}
+  table.hours tr:last-child td{border-bottom:none}
+  table.hours td.day{font-weight:700}
+  table.hours td.time{text-align:right; font-family:"Fredoka",sans-serif; font-weight:600; color:var(--teal-deep)}
+  table.hours tr.closed td.time{color:var(--rope); font-weight:700}
+
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media (max-width:560px){ .contact-grid{grid-template-columns:1fr} }
+  .contact-item{padding:14px; background:var(--sand); border-radius:10px; text-align:center}
+  .contact-item .label{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--rope); font-weight:700; margin-bottom:6px}
+  .contact-item a{color:var(--teal-deep); font-weight:700; text-decoration:none}
+
+  .map-link{
+    display:inline-block; margin-top:8px; padding:10px 20px; border-radius:999px;
+    background:var(--teal); color:#fff; font-family:"Fredoka",sans-serif; font-weight:600;
+    text-decoration:none; font-size:14px;
+  }
+
+  footer{text-align:center; color:var(--ink-soft); font-size:13px; margin-top:30px}
+  footer a{color:var(--teal-deep)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="top">
+    <a href="index.html">Home</a>
+    <a href="menu.html">Menu</a>
+    <a href="visit.html" class="active">Hours &amp; Visit</a>
+  </nav>
+
+  <header class="brand">
+    <img class="logo" src="assets/logo.png" alt="One Love Bar logo">
+    <h1>Hours &amp; Visit</h1>
+    <p>Playa Ballenas · Las Terrenas · Samaná · Dominican Republic</p>
+  </header>
+
+  <div class="card">
+    <h2>Hours of Operation</h2>
+    <table class="hours">
+      <tr><td class="day">Monday</td><td class="time">11 AM – 11 PM</td></tr>
+      <tr class="closed"><td class="day">Tuesday</td><td class="time">Closed</td></tr>
+      <tr><td class="day">Wednesday</td><td class="time">11 AM – 11 PM</td></tr>
+      <tr><td class="day">Thursday</td><td class="time">11 AM – 11 PM</td></tr>
+      <tr><td class="day">Friday</td><td class="time">11 AM – 11 PM</td></tr>
+      <tr><td class="day">Saturday</td><td class="time">11 AM – 11 PM</td></tr>
+      <tr><td class="day">Sunday</td><td class="time">11 AM – 11 PM</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Location</h2>
+    <p style="margin:0 0 4px">Playa Ballenas, Las Terrenas 32000, Samaná, Dominican Republic</p>
+    <p style="margin:0; color:var(--ink-soft); font-size:14px">Plus code: 8FG2+62 Las Terrenas</p>
+    <a class="map-link" href="https://www.google.com/maps/place/One+Love+Beach+Lounge/@19.3256116,-69.549886,719m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8eaefb67495f7b89:0x167aba8ee6d38e5!8m2!3d19.3256116!4d-69.549886!16s%2Fg%2F11z2y22109!18m1!1e1" target="_blank" rel="noopener">Get Directions</a>
+  </div>
+
+  <div class="card">
+    <h2>Contact &amp; Events</h2>
+    <p style="margin:0 0 14px; color:var(--ink-soft)">Planning a party, live music night or private event? Reach out and we'll take care of you.</p>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <div class="label">Email</div>
+        <a href="mailto:isarmiento@onelovebeachbar.com">isarmiento@onelovebeachbar.com</a>
+      </div>
+      <div class="contact-item">
+        <div class="label">Phone</div>
+        <a href="tel:+18098381983">+1 (809) 838-1983</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  One Love Bar &amp; Restaurant · Playa Ballenas, Las Terrenas, Samaná, Dominican Republic
+</footer>
+
+</body>
+</html>
